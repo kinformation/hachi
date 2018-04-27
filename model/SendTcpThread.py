@@ -8,8 +8,11 @@ import socket
 import time
 from itertools import repeat
 from contextlib import closing
+from tkinter import messagebox
 
 from model import SendThread
+from controller import TxController
+from controller import LogController
 
 
 class SendTcpThread(SendThread.SendThread):
@@ -18,29 +21,26 @@ class SendTcpThread(SendThread.SendThread):
 
         # TCP送信用ソケット生成
         self.sock = socket.socket(self.family, socket.SOCK_STREAM)
-
-        try:
-            self.sock.connect(self.address)
-        except ConnectionRefusedError as e:
-            # コネクション確立失敗
-            self.errmsg = e.args[1]
+        # コネクションタイムアウト値設定：3秒
+        self.sock.settimeout(3.0)
 
     def run(self):
-         # 送信元ポート通知
-        self.srcport_obj.set(self.sock.getsockname()[1])
 
-        # with => ブロックを抜けるときに必ずsockのclose()が呼ばれる
-        with closing(self.sock):
-            try:
-                # 最高速の処理を軽くするため処理を分ける
-                if self.unlimited:
-                    self._send_u()
-                else:
-                    self._send()
-            except(ConnectionAbortedError, ConnectionResetError) as e:
-                # TODO:ここのエラー処理は後で考える
-                # 止まったらボタン変えたい
-                print(e.args)
+        try:
+            # TCPコネクション生成
+            self.sock.connect(self.address)
+            # 送信元ポート通知
+            self.srcport_obj.set(self.sock.getsockname()[1])
+
+            # 最高速の処理を軽くするため処理を分ける
+            if self.unlimited:
+                self._send_u()
+            else:
+                self._send()
+        except Exception as e:
+            self._exc_func(e)
+        finally:
+            self.sock.close()
 
     def _send(self):
         # whileはforより圧倒的にループが遅い
@@ -62,3 +62,14 @@ class SendTcpThread(SendThread.SendThread):
             self.counter.num += 1
             if self.stop_flg:
                 break
+
+    def _exc_func(self, exc_obj):
+        send_ctl = TxController.SendAction()
+        logger = LogController.LogController()
+        if len(exc_obj.args) == 1:
+            msg = "コネクションの確立に失敗しました。"
+        else:
+            msg = exc_obj.args[1]
+        logger.insert(msg)
+        messagebox.showwarning(title="warning", message=msg)
+        send_ctl.send_stop()

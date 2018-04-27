@@ -15,16 +15,23 @@ class SendcountShareObject(object):
 
 
 class SendAction:
-    def __init__(self, params, widgets):
-        self.params = params
-        self.widgets = widgets
-        self.stat = 0
+    _instance = None
 
-        self.sendcount = SendcountShareObject()
+    def __new__(cls, params=None, widgets=None):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls.params = params
+            cls.widgets = widgets
+            cls.stat = 0
+            cls.sendcount = SendcountShareObject()
 
-        # スレッド変数
-        self.th_send = None
-        self.th_monitor = None
+            # スレッド変数
+            cls.th_send = None
+            cls.th_monitor = None
+        return cls._instance
+
+    def __init__(self, params=None, widgets=None):
+        pass
 
     def __call__(self, event=None):
         # 入力パラメータチェック
@@ -37,6 +44,9 @@ class SendAction:
             self._send_start()
         else:
             self._send_stop()
+
+    def send_stop(self):
+        self._send_stop()
 
     def _send_start(self):
         # ログ出力インスタンス
@@ -92,8 +102,10 @@ class SendAction:
     # スレッド停止
     def _send_stop(self):
         LogController.LogController().insert("パケット送信を停止します")
-        self.th_send.stop()
-        self.th_monitor.stop()
+        if self.th_send is not None:
+            self.th_send.stop()
+        if self.th_monitor is not None:
+            self.th_monitor.stop()
 
         self.params.send_btn_text.set("送信開始")
         self.params.srcport.set("")
