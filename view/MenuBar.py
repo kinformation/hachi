@@ -11,10 +11,10 @@ from controller import MenuController
 
 
 class MenuBar:
-    def __init__(self):
-        pass
+    def __init__(self, master):
+        self._set_menubar(master)
 
-    def set_menubar(self, parent_menu):
+    def _set_menubar(self, parent_menu):
         # ファイル(F)
         self._set_file_menu(parent_menu)
         # オプション

@@ -21,15 +21,15 @@ class App():
         # ===== メニューバー =====
         menubar = tk.Menu(master)
         master.configure(menu=menubar)
-        MenuBar.MenuBar().set_menubar(menubar)
+        MenuBar.MenuBar(menubar)
 
         # ===== メインフレーム =====
         main_frame = ttk.Frame(master)
         main_frame.pack()
 
-        RxField.RxField().set_rx_field(main_frame)
-        TxField.TxField().set_tx_field(main_frame)
-        LogField.LogField().set_log_field(main_frame)
+        RxField.RxField(main_frame)
+        TxField.TxField(main_frame)
+        LogField.LogField(main_frame)
 
 
 if __name__ == '__main__':

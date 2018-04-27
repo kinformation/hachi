@@ -32,11 +32,3 @@ class RecvUdpThread(RecvThread.RecvThread):
             else:
                 self.share_obj.count += 1
                 self.share_obj.total += len(data[0])
-
-
-if __name__ == '__main__':
-    host = '169.254.1.80'
-    port = '12000'
-    share_obj = 0
-    thread = RecvUdpThread(host, port, share_obj)
-    thread.start()

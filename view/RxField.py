@@ -57,14 +57,16 @@ class RxParams:
 class RxField:
     """ 表示領域の設定 """
 
-    def __init__(self):
+    def __init__(self, master):
         # 各種パラメータ格納クラス
         self.rxParams = RxParams()
         # パケット送信中に非活性するウィジェットを格納(辞書型)
         self.rxWidgets = {}
+        # 受信フィールド描画開始
+        self._set_rx_field(master)
 
     # ===== 受信フィールド =====
-    def set_rx_field(self, parent_frame):
+    def _set_rx_field(self, parent_frame):
         frame = ttk.Frame(parent_frame)
         frame.pack()
 

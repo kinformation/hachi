@@ -89,14 +89,16 @@ class TxParams:
 class TxField:
     """送信領域設定クラス"""
 
-    def __init__(self):
+    def __init__(self, master):
         # 各種パラメータ格納クラス
         self.txParams = TxParams()
         # パケット送信中に非活性するウィジェットを格納(辞書型)
         self.txWidgets = {}
+        # 送信フィールド描画開始
+        self._set_tx_field(master)
 
     # ===== 送信フィールド =====
-    def set_tx_field(self, parent_frame):
+    def _set_tx_field(self, parent_frame):
         frame = ttk.Frame(parent_frame)
         frame.pack()
 

@@ -17,21 +17,6 @@ def ramdom_str(len):
     ])
 
 
-def string_width(string):
-    """
-    文字列の見た目幅の長さを返す
-    https://ymotongpoo.hatenablog.com/entry/20120511/1336706463
-    """
-    width = 0
-    for c in string:
-        char_width = unicodedata.east_asian_width(c)
-        if char_width in u"WFA":
-            width += 2
-        else:
-            width += 1
-    return width
-
-
 """
 ウィジェット用クラス
 """

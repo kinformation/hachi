@@ -32,11 +32,3 @@ class RecvTcpThread(RecvThread.RecvThread):
                 pass
             self.share_obj.count += 1
             self.share_obj.total += len(rcvmsg)
-
-
-if __name__ == '__main__':
-    host = '169.254.1.80'
-    port = '12000'
-    share_obj = 0
-    thread = RecvTcpThread(host, port, share_obj)
-    thread.start()

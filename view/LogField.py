@@ -9,10 +9,10 @@ from controller import LogController
 class LogField:
     """ 表示領域の設定 """
 
-    def __init__(self):
-        pass
+    def __init__(self, master):
+        self._set_log_field(master)
 
-    def set_log_field(self, parent_frame):
+    def _set_log_field(self, parent_frame):
 
         frame = ttk.Frame(parent_frame)
         frame.pack()
