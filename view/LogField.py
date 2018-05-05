@@ -20,8 +20,8 @@ class LogField:
         # ログ表示エリア
         log_area = tk.Text(frame, height=8)
         log_area.pack(fill=tk.BOTH, side=tk.LEFT)
-        logger = LogController.LogController(log_area)
-        logger.insert("hachiが起動しました")
+        # ここでLogControllerを最初に呼ぶこと
+        LogController.LogController(log_area)
 
         # Scrollbar
         scrollbar = ttk.Scrollbar(

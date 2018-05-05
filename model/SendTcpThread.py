@@ -12,7 +12,6 @@ from tkinter import messagebox
 
 from model import SendThread
 from controller import TxController
-from controller import LogController
 
 
 class SendTcpThread(SendThread.SendThread):
@@ -38,7 +37,7 @@ class SendTcpThread(SendThread.SendThread):
             else:
                 self._send()
         except Exception as e:
-            self._exc_func(e)
+            TxController.tcp_exception(e)
         finally:
             self.sock.close()
 
@@ -62,14 +61,3 @@ class SendTcpThread(SendThread.SendThread):
             self.counter.num += 1
             if self.stop_flg:
                 break
-
-    def _exc_func(self, exc_obj):
-        send_ctl = TxController.SendAction()
-        logger = LogController.LogController()
-        if len(exc_obj.args) == 1:
-            msg = "コネクションの確立に失敗しました。"
-        else:
-            msg = exc_obj.args[1]
-        logger.insert(msg)
-        messagebox.showwarning(title="warning", message=msg)
-        send_ctl.send_stop()

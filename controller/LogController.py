@@ -10,6 +10,7 @@ class LogController:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls.log_area = log_area
+            cls.insert(cls, "hachiが起動しました")
 
         return cls._instance
 

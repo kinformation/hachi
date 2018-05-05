@@ -146,7 +146,6 @@ class RxField:
         self.rxWidgets["entry_port"] = entry_port
 
     # ===== 受信モニター =====
-
     def _set_monitor_field(self, parent_frame):
         frame = ttk.LabelFrame(parent_frame, text="受信モニター")
         frame.pack()

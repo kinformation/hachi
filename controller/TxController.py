@@ -147,3 +147,14 @@ class SendAction:
             msg += "・送信パケット数/秒は 1～20,000 の範囲で指定してください。\n"
 
         return msg
+
+
+def tcp_exception(exc_obj):
+    logger = LogController.LogController()
+    if len(exc_obj.args) == 1:
+        msg = "コネクションの確立に失敗しました。"
+    else:
+        msg = exc_obj.args[1]
+    logger.insert(msg)
+    messagebox.showwarning(title="warning", message=msg)
+    SendAction().send_stop()
