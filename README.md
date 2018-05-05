@@ -1,78 +1,78 @@
 Hachi
 ====
 
-�ͥåȥ�����̿����&���롼�ץå�¬��GUI�ġ���
+ネットワークの通信負荷&スループット測定GUIツール
 
 ## Description
 
-`Hachi`��TCP/UDP�ѥ��åȤˤ��ͥåȥ���Υȥ�ե��å���٥ƥ��Ȥ䡢���롼�ץåȷ�¬�����ѤǤ��ޤ���
-���롼�ץåȷ�¬������ϥ��饤�����¦�ȥ�����¦ξ����ü����ư����Ƥ���������
-����ġ���[`Nana`](https://www.vector.co.jp/soft/winnt/net/se168678.html)�ȸߴ���������Ƥ��뤿�ᡢNana=>Hachi��Hachi=>Nana���Ȥ߹�碌�Ǥ⥹�롼�ץåȷ�¬�ϲ�ǽ�Ǥ���
+`Hachi`はTCP/UDPパケットによるネットワークのトラフィック負荷テストや、スループット計測に利用できます。
+スループット計測する場合はクライアント側とサーバ側両方の端末で動作させてください。
+類似ツール[`Nana`](https://www.vector.co.jp/soft/winnt/net/se168678.html)と互換を持たせてあるため、Nana=>Hachi、Hachi=>Nanaの組み合わせでもスループット計測は可能です。
 
 ## Demo
 
-![���̥���ץ���](capture.png)
+![画面キャプチャ](capture.png)
 
 ## VS. 
 
-### �����е�ǽ
+### サーバ機能
 
 ||Nana|Hachi|
 |:--|:--|:--|
-|TCP�ѥ��åȼ���|��|��|
-|UDP�ѥ��åȼ���|��|��|
-|�Լ�IP���ɥ쥹����|��|��|
-|�Լ��ݡ��Ȼ���|��|��|
-|���롼�ץåȷ�¬|�����ѥ��åȿ�/��<br>���ѥ��åȤ�����Υǡ���Ĺ<br>bps|�����ѥ��åȿ�/��<br>���ѥ��åȤ�����Υǡ���Ĺ<br>bps|
-|Multicast����|��|��|
-|IPv6�б�|��|��|
+|TCPパケット受信|○|○|
+|UDPパケット受信|○|○|
+|待受IPアドレス指定|○|○|
+|待受ポート指定|○|○|
+|スループット計測|受信パケット数/秒<br>１パケットあたりのデータ長<br>bps|受信パケット数/秒<br>１パケットあたりのデータ長<br>bps|
+|Multicast受信|○|×|
+|IPv6対応|○|○|
 
-### ���饤����ȵ�ǽ
-
-||Nana|Hachi|
-|:--|:--|:--|
-|TCP�ѥ��å�����|��|��|
-|UDP�ѥ��å�����|��|��|
-|�ѥ��åȼ�ư����|��|��|
-|����IP���ɥ쥹����|��|��|
-|����ݡ��Ȼ���|��|��|
-|�ѥ��åȥǡ���Ĺ����|��|��|
-|�ѥ��åȿ�/������|��|��|
-|�ǹ�®�ѥ��å�����|��|��|
-|���롼�ץåȷ�¬|�����ѥ��åȿ�/��<br>���ѥ��åȤ�����Υǡ���Ĺ<br>bps|�����ѥ��åȿ�/��<br>���ѥ��åȤ�����Υǡ���Ĺ<br>bps|
-|IPv6�б�|��|��|
-
-### ���ץ����ǽ
+### クライアント機能
 
 ||Nana|Hachi|
 |:--|:--|:--|
-|������ͥ���ٻ���|��|��|
-|TypeOfService����|��|��|
-|TimeToLive����|��|��|
-|�����ѥ��åȥǡ���Ĺ�Υ������Ѳ�|��|��|
-|�����ѥ��åȿ�/�äΥ������Ѳ�|��|��|
+|TCPパケット送信|○|○|
+|UDPパケット送信|○|○|
+|パケット手動生成|○|×|
+|宛先IPアドレス指定|○|○|
+|宛先ポート指定|○|○|
+|パケットデータ長設定|○|○|
+|パケット数/秒設定|○|○|
+|最高速パケット送信|○|○|
+|スループット計測|送信パケット数/秒<br>１パケットあたりのデータ長<br>bps|送信パケット数/秒<br>１パケットあたりのデータ長<br>bps|
+|IPv6対応|○|○|
+
+### オプション機能
+
+||Nana|Hachi|
+|:--|:--|:--|
+|タスク優先度指定|○|×|
+|TypeOfService設定|○|×|
+|TimeToLive設定|○|×|
+|送信パケットデータ長のランダム変化|○|×|
+|送信パケット数/秒のランダム変化|○|×|
 
 ## Usage
 
 ## Install
 
-Ŭ���ʥǥ��쥯�ȥ��`hachi.exe`���֤��Ƽ¹Ԥ��Ƥ���������
-���󥤥󥹥ȡ�������֤���`hachi.exe`�������Ʋ�������
+適当なディレクトリに`hachi.exe`を置いて実行してください。
+アンインストールは配置した`hachi.exe`を削除して下さい。
 
 ## Build
 
-�ܥ��եȥ�������Python�ץ�������`PyInstaller`�Ǽ¹Բ�ǽ�ե�����˥ѥå������󥰤��Ƥ��ޤ���
+本ソフトウェアはPythonプログラムを`PyInstaller`で実行可能ファイルにパッケージングしています。
 
-### �ӥ�ɴĶ�
+### ビルド環境
 
 * Windows 7 64bit
 * Python 3.6.4
 
-### ��¸�ѥå�����
+### 依存パッケージ
 
 * netifaces
 
-### �¹ԥե�����ӥ�ɥ��ޥ��
+### 実行ファイルビルドコマンド
 
 ```
 pyinstaller -F -w --distpath . --icon=hachi.ico hachi.py
@@ -82,9 +82,9 @@ pyinstaller -F -w --distpath . --icon=hachi.ico hachi.py
 
 ## Licence
 
-[MIT](https://github.com/tcnksm/tool/blob/master/LICENCE)
+[MIT](https://github.com/kinformation/hachi/blob/master/LICENSE.txt)
 
 ## Author
 
-[tcnksm](https://github.com/tcnksm)
+[kinformation](https://github.com/kinformation)
 
