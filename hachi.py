@@ -8,8 +8,13 @@ from view import RxField, TxField, LogField, MenuBar
 
 
 class App():
-    def __init__(self, master):
+    def __init__(self):
+        master = tk.Tk()
 
+        # ===== ウィンドウ基本設定 =====
+        # タイトル
+        master.title("hachi")
+        # フォント
         master.option_add('*font', '"Meiryo UI" 9')
         # ウィンドウサイズ変更禁止
         master.resizable(0, 0)
@@ -31,9 +36,8 @@ class App():
         TxField.TxField(main_frame)
         LogField.LogField(main_frame)
 
+        master.mainloop()
+
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    root.title("hachi")
-    app = App(root)
-    root.mainloop()
+    App()
