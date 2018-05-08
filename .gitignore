@@ -4,3 +4,4 @@ build/
 *.spec
 venv/
 *.code-workspace
+Pipfile.lock
