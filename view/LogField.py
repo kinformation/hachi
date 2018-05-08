@@ -8,6 +8,7 @@ from controller import LogController
 
 class LogField:
     """ ログ表示領域の設定 """
+
     def __init__(self, master):
         self._set_log_field(master)
 
