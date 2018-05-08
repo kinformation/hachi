@@ -16,7 +16,7 @@ class SendThread(threading.Thread):
         super(SendThread, self).__init__()
         self.unlimited = params.unlimited.get()
         self.freq = 1 / int(params.pps.get())
-        self.payload = HachiUtil.ramdom_str(int(params.datalen.get())).encode()
+        self.payload = HachiUtil.ramdom_binary(int(params.datalen.get()))
         self.host = params.host.get()
         self.address = (self.host, int(params.dstport.get()))
 

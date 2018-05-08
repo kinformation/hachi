@@ -4,17 +4,15 @@
 汎用ユーティリティ
 """
 
-import string
+import struct
 import random
 import netifaces
 import ipaddress
-import unicodedata
 
 
-def ramdom_str(len):
-    return ''.join([
-        random.choice(string.ascii_letters + string.digits) for i in range(len)
-    ])
+# 指定バイト数のランダムバイナリデータ作成
+def ramdom_binary(len):
+    return b''.join([struct.pack("B",random.randint(0,255)) for i in range(0, len)])
 
 
 """
