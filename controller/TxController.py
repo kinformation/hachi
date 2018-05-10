@@ -67,7 +67,7 @@ class SendAction:
         if dstport_type == '単一':
             dstport = dstport_st
         else:
-            dstport = "{}～{}[{}]".format(dstport_st, dstport_ed, dstport_type)
+            dstport = "{}～{}".format(dstport_st, dstport_ed)
 
         if proto == 0:
             logger.insert("TCPパケット送信を開始します({}:{})".format(

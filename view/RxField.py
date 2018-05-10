@@ -136,6 +136,7 @@ class RxField:
         combo_host = ttk.Combobox(
             frame, width=28, values=address_list, textvariable=self.rxParams.host)
         self.rxParams.host.set(address_list[0])
+        # IPアドレスをコピーできるようにするため、ROにしない
         # combo_host.state(['readonly'])
         combo_host.pack(side=tk.LEFT)
 

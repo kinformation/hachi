@@ -6,7 +6,7 @@ UDPでパケットを投げるスレッド
 
 import socket
 import time
-from itertools import repeat
+from itertools import cycle
 from contextlib import closing
 
 from model import SendThread
@@ -21,8 +21,6 @@ class SendUdpThread(SendThread.SendThread):
 
     def run(self):
         # 送信元ポート特定のため一発投げておく
-        print(self.address_list[0])
-        print(self.address_list[0])
         self.sock.sendto(self.payload, self.address_list[0])
         self.srcport_obj.set(self.sock.getsockname()[1])
 
@@ -35,13 +33,11 @@ class SendUdpThread(SendThread.SendThread):
                 self._send()
 
     def _send(self):
-        # whileはforより圧倒的にループが遅い
         st = 0
-        size = len(self.address_list)
-        for _ in repeat(0):
+        # whileはforより圧倒的にループが遅い
+        for address in cycle(self.address_list):
             st = time.perf_counter()
-            self.sock.sendto(
-                self.payload, self.address_list[self.counter.num % size])
+            self.sock.sendto(self.payload, address)
             self.counter.num += 1
             if self.stop_flg:
                 break
@@ -52,10 +48,8 @@ class SendUdpThread(SendThread.SendThread):
                 pass
 
     def _send_u(self):
-        size = len(self.address_list)
-        for _ in repeat(0):
-            self.sock.sendto(
-                self.payload, self.address_list[self.counter.num % size])
+        for address in cycle(self.address_list):
+            self.sock.sendto(self.payload, address)
             self.counter.num += 1
             if self.stop_flg:
                 break

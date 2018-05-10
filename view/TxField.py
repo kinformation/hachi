@@ -201,7 +201,7 @@ class TxField:
         entry_port_ed.pack(side=tk.LEFT)
 
         # ===== ポート指定種別(プルダウン) =====
-        typelist = ('単一', 'ﾗｳﾝﾄﾞﾛﾋﾞﾝ', 'ランダム')
+        typelist = ('単一', 'ﾗｳﾝﾄﾞﾛﾋﾞﾝ')
 
         # ウィジェットを渡すため、TxParams.__init__に書けない
         changePortState = HachiUtil.ChangePortState(

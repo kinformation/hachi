@@ -27,7 +27,7 @@ class SendTcpThread(SendThread.SendThread):
 
         try:
             # TCPコネクション生成
-            self.sock.connect(self.address)
+            self.sock.connect(self.address_list[0])
             # 送信元ポート通知
             self.srcport_obj.set(self.sock.getsockname()[1])
 

@@ -7,20 +7,8 @@
 import socket
 import threading
 import ipaddress
-import random
 
 from model import HachiUtil
-
-
-class RandomPort:
-    """ 範囲内のポート番号をランダムで返すクラス """
-
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
-
-    def __call__(self, * args):
-        return random.randint(self.start, self.end)
 
 
 class SendThread(threading.Thread):
@@ -56,12 +44,9 @@ class SendThread(threading.Thread):
     def _dstport_list(self, start, end, _type):
         if _type == "単一":
             return [start]
-        else:
+        elif _type == "ﾗｳﾝﾄﾞﾛﾋﾞﾝ":
             # 必ずdstport_stが小さくなるようにする
             if start > end:
                 start, end = end, start
 
-            if _type == "ﾗｳﾝﾄﾞﾛﾋﾞﾝ":
-                return list(range(start, end+1))
-            elif _type == "ランダム":
-                return [RandomPort(start, end)()]
+            return list(range(start, end+1))
