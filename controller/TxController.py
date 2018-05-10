@@ -61,7 +61,14 @@ class SendAction:
         # 2:Original(不使用)
         proto = self.params.proto.get()
         host = self.params.host.get()
-        dstport = self.params.dstport.get()
+        dstport_st = self.params.dstport_st.get()
+        dstport_ed = self.params.dstport_ed.get()
+        dstport_type = self.params.dstport_type.get()
+        if dstport_type == '単一':
+            dstport = dstport_st
+        else:
+            dstport = "{}～{}[{}]".format(dstport_st, dstport_ed, dstport_type)
+
         if proto == 0:
             logger.insert("TCPパケット送信を開始します({}:{})".format(
                 host, dstport))
@@ -123,7 +130,8 @@ class SendAction:
     def _param_check(self):
         msg = ""
         host = self.params.host.get()
-        dstport = self.params.dstport.get()
+        dstport_st = self.params.dstport_st.get()
+        dstport_ed = self.params.dstport_ed.get()
         datalen = self.params.datalen.get()
         pps = self.params.pps.get()
 
@@ -135,7 +143,7 @@ class SendAction:
             msg += "・IPアドレスの指定が不正です。\n"
 
         # ポート番号 0～65535
-        if dstport < 0 or 65535 < dstport:
+        if (dstport_st < 0 or 65535 < dstport_st) or (dstport_ed < 0 or 65535 < dstport_ed):
             msg += "・ポート番号は 0～65535 の範囲で指定してください。\n"
 
         # データ長 0～9,000

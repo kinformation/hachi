@@ -16,7 +16,9 @@ class TxParams:
     def __init__(self):
         self.__proto = tk.IntVar(value=1)
         self.__host = tk.StringVar(value="169.254.1.80")
-        self.__dstport = tk.IntVar(value=12000)
+        self.__dstport_st = tk.IntVar(value=12000)
+        self.__dstport_ed = tk.IntVar(value=12000)
+        self.__dstport_type = tk.StringVar()
         self.__datalen = tk.IntVar(value=1024)
         self.__pps = tk.IntVar(value=100)
         self.__unlimited = tk.BooleanVar(False)
@@ -50,8 +52,16 @@ class TxParams:
         return self.__host
 
     @property
-    def dstport(self):
-        return self.__dstport
+    def dstport_st(self):
+        return self.__dstport_st
+
+    @property
+    def dstport_ed(self):
+        return self.__dstport_ed
+
+    @property
+    def dstport_type(self):
+        return self.__dstport_type
 
     @property
     def datalen(self):
@@ -164,11 +174,51 @@ class TxField:
         frame.pack()
 
         entry_host = CommonWidget.set_label_entry(
-            frame, "IPアドレス", 30, self.txParams.host)
+            frame, "IPアドレス", 30, self.txParams.host, tk.TOP)
         self.txWidgets["entry_host"] = entry_host
-        entry_dstport = CommonWidget.set_label_entry(
-            frame, "ポート", 6, self.txParams.dstport)
-        self.txWidgets["entry_dstport"] = entry_dstport
+
+        # ポート設定
+        self._set_port_field(frame)
+
+    # ===== 送信先ポート設定 =====
+    def _set_port_field(self, parent_frame):
+
+        frame = ttk.Frame(parent_frame)
+        frame.pack(side=tk.LEFT)
+
+        # Label("ポート")
+        ttk.Label(frame, text="ポート").pack(side=tk.LEFT)
+
+        # Entry(範囲指定：開始)
+        entry_port_st = ttk.Entry(
+            frame, width=6, textvariable=self.txParams.dstport_st)
+        entry_port_st.pack(side=tk.LEFT)
+        # Label("～")
+        ttk.Label(frame, text="～").pack(side=tk.LEFT)
+        # Entry(範囲指定：終了)
+        entry_port_ed = ttk.Entry(
+            frame, width=6, textvariable=self.txParams.dstport_ed)
+        entry_port_ed.pack(side=tk.LEFT)
+
+        # ===== ポート指定種別(プルダウン) =====
+        typelist = ('単一', 'ﾗｳﾝﾄﾞﾛﾋﾞﾝ', 'ランダム')
+
+        # ウィジェットを渡すため、TxParams.__init__に書けない
+        changePortState = HachiUtil.ChangePortState(
+            self.txParams.dstport_type, entry_port_ed)
+        # プルダウン更新時に発火するよう登録
+        self.txParams.dstport_type.trace("w", changePortState)
+
+        combo_porttype = ttk.Combobox(
+            frame, width=10, values=typelist, textvariable=self.txParams.dstport_type)
+        self.txParams.dstport_type.set(typelist[0])
+        combo_porttype.state(['readonly'])
+        combo_porttype.pack(side=tk.LEFT)
+        # ===== ポート指定種別(プルダウン):終わり =====
+
+        self.txWidgets["entry_port_st"] = entry_port_st
+        self.txWidgets["entry_port_ed"] = entry_port_ed
+        self.txWidgets["combo_porttype"] = combo_porttype
 
     # ===== 送信パラメタ設定 =====
     def _set_param_field(self, parent_frame):

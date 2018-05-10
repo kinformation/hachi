@@ -21,7 +21,9 @@ class SendUdpThread(SendThread.SendThread):
 
     def run(self):
         # 送信元ポート特定のため一発投げておく
-        self.sock.sendto(self.payload, self.address)
+        print(self.address_list[0])
+        print(self.address_list[0])
+        self.sock.sendto(self.payload, self.address_list[0])
         self.srcport_obj.set(self.sock.getsockname()[1])
 
         # with => ブロックを抜けるときに必ずsockのclose()が呼ばれる
@@ -35,9 +37,11 @@ class SendUdpThread(SendThread.SendThread):
     def _send(self):
         # whileはforより圧倒的にループが遅い
         st = 0
+        size = len(self.address_list)
         for _ in repeat(0):
             st = time.perf_counter()
-            self.sock.sendto(self.payload, self.address)
+            self.sock.sendto(
+                self.payload, self.address_list[self.counter.num % size])
             self.counter.num += 1
             if self.stop_flg:
                 break
@@ -48,8 +52,10 @@ class SendUdpThread(SendThread.SendThread):
                 pass
 
     def _send_u(self):
+        size = len(self.address_list)
         for _ in repeat(0):
-            self.sock.sendto(self.payload, self.address)
+            self.sock.sendto(
+                self.payload, self.address_list[self.counter.num % size])
             self.counter.num += 1
             if self.stop_flg:
                 break

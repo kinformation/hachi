@@ -12,7 +12,7 @@ import ipaddress
 
 # 指定バイト数のランダムバイナリデータ作成
 def ramdom_binary(len):
-    return b''.join([struct.pack("B",random.randint(0,255)) for i in range(0, len)])
+    return b''.join([struct.pack("B", random.randint(0, 255)) for i in range(0, len)])
 
 
 """
@@ -50,6 +50,20 @@ class UpdateBps:
 
         except:
             self.bps_str.set("Unknown")
+
+
+class ChangePortState:
+    """ 送信先ポート(レンジ)ステータスの動的更新 """
+
+    def __init__(self, type, entry):
+        self.type = type
+        self.entry = entry
+
+    def __call__(self, *args):
+        if self.type.get() == "単一":
+            self.entry.state(['disabled'])
+        else:
+            self.entry.state(['!disabled'])
 
 
 class LocalAddress:
