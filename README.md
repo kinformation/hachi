@@ -13,7 +13,7 @@ Hachi
 
 ![画面キャプチャ](capture.png)
 
-## VS. 
+## VS.
 
 ### サーバ機能
 
@@ -52,8 +52,6 @@ Hachi
 |送信パケットデータ長のランダム変化|○|×|
 |送信パケット数/秒のランダム変化|○|×|
 
-## Usage
-
 ## Install
 
 適当なディレクトリに`hachi.exe`を置いて実行してください。
@@ -70,15 +68,14 @@ Hachi
 
 ### 依存パッケージ
 
+* PyInstaller
 * netifaces
 
 ### 実行ファイルビルドコマンド
 
 ```
-pyinstaller -F -w --distpath . --icon=hachi.ico hachi.py
+setup.bat
 ```
-
-## Contribution
 
 ## Licence
 
@@ -87,4 +84,3 @@ pyinstaller -F -w --distpath . --icon=hachi.ico hachi.py
 ## Author
 
 [kinformation](https://github.com/kinformation)
-
