@@ -8,9 +8,7 @@ from view import RxField, TxField, LogField, MenuBar
 
 
 class App():
-    def __init__(self):
-        master = tk.Tk()
-
+    def __init__(self, master):
         # ===== ウィンドウ基本設定 =====
         # タイトル
         master.title("hachi")
@@ -29,15 +27,12 @@ class App():
         MenuBar.MenuBar(menubar)
 
         # ===== メインフレーム =====
-        main_frame = ttk.Frame(master)
-        main_frame.pack()
-
-        RxField.RxField(main_frame)
-        TxField.TxField(main_frame)
-        LogField.LogField(main_frame)
-
-        master.mainloop()
+        RxField.RxField(master)
+        TxField.TxField(master)
+        LogField.LogField(master)
 
 
 if __name__ == '__main__':
-    App()
+    master = tk.Tk()
+    App(master)
+    master.mainloop()
