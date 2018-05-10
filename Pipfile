@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 netifaces = "*"
+pyinstaller = "*"
 
 [dev-packages]
 pylint = "*"
