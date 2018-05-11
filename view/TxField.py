@@ -160,13 +160,17 @@ class TxField:
             frame, text="TCP", value=0, variable=self.txParams.proto)
         radio_udp = ttk.Radiobutton(
             frame, text="UDP", value=1, variable=self.txParams.proto)
+        radio_org = ttk.Radiobutton(
+            frame, text="Original", value=2, variable=self.txParams.proto)
+
+        radio_tcp.pack(side=tk.LEFT)
+        radio_udp.pack(side=tk.LEFT)
         # originalは使わなさそうなので、いったん除外
-        # radio_tcp = ttk.Radiobutton(
-        #     frame, text="Original", value=2, variable=self.txParams.proto)
+        # radio_org.pack(side=tk.LEFT)
 
         self.txWidgets["radio_tcp"] = radio_tcp
         self.txWidgets["radio_udp"] = radio_udp
-        # self.txWidgets["radio_org"] = radio_org
+        self.txWidgets["radio_org"] = radio_org
 
     # ===== 送信先設定 =====
     def _set_addr_field(self, parent_frame):
@@ -254,7 +258,7 @@ class TxField:
         frame1 = ttk.Frame(parent_frame)
         frame1.pack(anchor=tk.NW)
 
-        ttk.Label(frame1, text="送信速度の目安:       ").pack(side=tk.LEFT)
+        ttk.Label(frame1, text="送信速度の目安:   ").pack(side=tk.LEFT)
         ttk.Label(frame1, textvariable=self.txParams.predicted_bps).pack(
             side=tk.LEFT)
 

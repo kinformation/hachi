@@ -118,6 +118,9 @@ class RxField:
         radio_udp = ttk.Radiobutton(
             frame, text="UDP", value=1, variable=self.rxParams.proto)
 
+        radio_tcp.pack(side=tk.LEFT)
+        radio_udp.pack(side=tk.LEFT)
+
         self.rxWidgets["radio_tcp"] = radio_tcp
         self.rxWidgets["radio_udp"] = radio_udp
 
