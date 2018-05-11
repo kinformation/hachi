@@ -68,30 +68,32 @@ class RxField:
     # ===== 受信フィールド =====
     def _set_rx_field(self, parent_frame):
         frame = ttk.Frame(parent_frame)
-        frame.pack()
 
         # 左ペイン(受信設定)
         left_frame = ttk.LabelFrame(frame, text="受信設定")
-        left_frame.pack(side=tk.LEFT)
         self._set_left_field(left_frame)
 
         # 右ペイン(モニタ、コントローラ)
         right_frame = ttk.Frame(frame)
-        right_frame.pack(fill=tk.BOTH)
         self._set_right_field(right_frame)
+
+        # 描画(左ペインを広げたいのでこの順番)
+        frame.pack(fill=tk.X)
+        right_frame.pack(side=tk.RIGHT)
+        left_frame.pack(fill=tk.X)
 
     # ===== 受信フィールド:左ペイン =====
     def _set_left_field(self, parent_frame):
-        # 左上ペイン
+        # 左上ペイン(プロトコル、Multicast)
         frame0 = ttk.Frame(parent_frame)
-        frame0.pack(fill=tk.BOTH)
+        frame0.pack(anchor=tk.W)
         self._set_proto_field(frame0)
         # ※Multicast使わなさそうなのでコメントアウト
         # self._set_multicast_field(frame0)
 
-        # 左下ペイン
+        # 左下ペイン(待ち受けアドレス、ポート設定)
         frame1 = ttk.Frame(parent_frame)
-        frame1.pack()
+        frame1.pack(fill=tk.X)
         self._set_addr_field(frame1)
 
     # ===== 受信フィールド:右ペイン =====
@@ -111,14 +113,15 @@ class RxField:
         frame = ttk.LabelFrame(parent_frame, text="使用プロトコル")
         frame.pack(side=tk.LEFT)
 
-        radio_tcp = CommonWidget.set_radio(
-            frame, "TCP", 0, self.rxParams.proto)
-        radio_udp = CommonWidget.set_radio(
-            frame, "UDP", 1, self.rxParams.proto)
+        radio_tcp = ttk.Radiobutton(
+            frame, text="TCP", value=0, variable=self.rxParams.proto)
+        radio_udp = ttk.Radiobutton(
+            frame, text="UDP", value=1, variable=self.rxParams.proto)
+
         self.rxWidgets["radio_tcp"] = radio_tcp
         self.rxWidgets["radio_udp"] = radio_udp
 
-    # ===== Multicast =====
+    # ===== Multicast(未使用) =====
     def _set_multicast_field(self, parent_frame):
         frame = ttk.LabelFrame(parent_frame, text="Multicast")
         frame.pack(fill=tk.BOTH)
@@ -129,7 +132,7 @@ class RxField:
     # ===== 受信ポート設定 =====
     def _set_addr_field(self, parent_frame):
         frame = ttk.LabelFrame(parent_frame, text="受信ポート設定")
-        frame.pack()
+        frame.pack(fill=tk.X)
 
         ttk.Label(frame, text="IPアドレス").pack(side=tk.LEFT)
         address_list = (HachiUtil.LocalAddress())()
@@ -140,8 +143,9 @@ class RxField:
         # combo_host.state(['readonly'])
         combo_host.pack(side=tk.LEFT)
 
-        entry_port = CommonWidget.set_label_entry(
-            frame, "ポート", 6, self.rxParams.port)
+        entry_port = CommonWidget.LabelEntry(
+            frame, text="ポート", width=6, textvariable=self.rxParams.port)
+        entry_port.pack(side=tk.LEFT)
 
         self.rxWidgets["combo_host"] = combo_host
         self.rxWidgets["entry_port"] = entry_port
@@ -151,12 +155,12 @@ class RxField:
         frame = ttk.LabelFrame(parent_frame, text="受信モニター")
         frame.pack()
 
-        CommonWidget.set_label_disable_entry(
-            frame, "受信数/秒", 7, self.rxParams.real_pps)
-        CommonWidget.set_label_disable_entry(
-            frame, "データ長(Byte)", 6, self.rxParams.real_datalen)
-        CommonWidget.set_label_disable_entry(
-            frame, "bps換算", 9, self.rxParams.real_bps)
+        CommonWidget.LabelReadonlyEntry(
+            frame, text="受信数/秒", width=7, textvariable=self.rxParams.real_pps)
+        CommonWidget.LabelReadonlyEntry(
+            frame, text="データ長(Byte)", width=6, textvariable=self.rxParams.real_datalen)
+        CommonWidget.LabelReadonlyEntry(
+            frame, text="bps換算", width=9, textvariable=self.rxParams.real_bps)
 
     # ===== 受信ボタン =====
     def _set_controller_field(self, parent_frame):

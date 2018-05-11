@@ -124,6 +124,10 @@ class SendAction:
         HachiUtil.CheckUnlimited(
             self.params.unlimited, self.widgets['entry_pps'])()
 
+        # 送信先ポートEntry処理
+        HachiUtil.ChangePortState(
+            self.widgets['combo_porttype'], self.widgets['entry_port_ed'])()
+
         self.stat = 0
 
     # パラメータチェック

@@ -17,7 +17,7 @@ class TxParams:
         self.__proto = tk.IntVar(value=1)
         self.__host = tk.StringVar(value="169.254.1.80")
         self.__dstport_st = tk.IntVar(value=12000)
-        self.__dstport_ed = tk.IntVar(value=12000)
+        self.__dstport_ed = tk.IntVar(value=12002)
         self.__dstport_type = tk.StringVar()
         self.__datalen = tk.IntVar(value=1024)
         self.__pps = tk.IntVar(value=100)
@@ -156,13 +156,13 @@ class TxField:
         frame = ttk.LabelFrame(parent_frame, text="使用プロトコル")
         frame.pack(side=tk.LEFT)
 
-        radio_tcp = CommonWidget.set_radio(
-            frame, "TCP", 0, self.txParams.proto)
-        radio_udp = CommonWidget.set_radio(
-            frame, "UDP", 1, self.txParams.proto)
+        radio_tcp = ttk.Radiobutton(
+            frame, text="TCP", value=0, variable=self.txParams.proto)
+        radio_udp = ttk.Radiobutton(
+            frame, text="UDP", value=1, variable=self.txParams.proto)
         # originalは使わなさそうなので、いったん除外
-        # radio_org = CommonWidget.set_radio(
-        #     frame, "Original", 2, self.txParams.proto)
+        # radio_tcp = ttk.Radiobutton(
+        #     frame, text="Original", value=2, variable=self.txParams.proto)
 
         self.txWidgets["radio_tcp"] = radio_tcp
         self.txWidgets["radio_udp"] = radio_udp
@@ -173,8 +173,9 @@ class TxField:
         frame = ttk.LabelFrame(parent_frame, text="送信先設定")
         frame.pack()
 
-        entry_host = CommonWidget.set_label_entry(
-            frame, "IPアドレス", 30, self.txParams.host, tk.TOP)
+        entry_host = CommonWidget.LabelEntry(
+            frame, text="IPアドレス", width=30, textvariable=self.txParams.host)
+        entry_host.pack(side=tk.LEFT, anchor=tk.N)
         self.txWidgets["entry_host"] = entry_host
 
         # ポート設定
@@ -186,19 +187,24 @@ class TxField:
         frame = ttk.Frame(parent_frame)
         frame.pack(side=tk.LEFT)
 
+        # ===== 宛先ポート入力 =====
+        frame_port = ttk.Frame(frame)
+        frame_port.pack(side=tk.TOP)
+
         # Label("ポート")
-        ttk.Label(frame, text="ポート").pack(side=tk.LEFT)
+        ttk.Label(frame_port, text="ポート").pack(side=tk.LEFT)
 
         # Entry(範囲指定：開始)
         entry_port_st = ttk.Entry(
-            frame, width=6, textvariable=self.txParams.dstport_st)
+            frame_port, width=6, textvariable=self.txParams.dstport_st)
         entry_port_st.pack(side=tk.LEFT)
         # Label("～")
-        ttk.Label(frame, text="～").pack(side=tk.LEFT)
+        ttk.Label(frame_port, text="～").pack(side=tk.LEFT)
         # Entry(範囲指定：終了)
         entry_port_ed = ttk.Entry(
-            frame, width=6, textvariable=self.txParams.dstport_ed)
+            frame_port, width=6, textvariable=self.txParams.dstport_ed)
         entry_port_ed.pack(side=tk.LEFT)
+        # ===== 宛先ポート入力:終わり =====
 
         # ===== ポート指定種別(プルダウン) =====
         typelist = ('単一', 'ﾗｳﾝﾄﾞﾛﾋﾞﾝ')
@@ -213,7 +219,7 @@ class TxField:
             frame, width=10, values=typelist, textvariable=self.txParams.dstport_type)
         self.txParams.dstport_type.set(typelist[0])
         combo_porttype.state(['readonly'])
-        combo_porttype.pack(side=tk.LEFT)
+        combo_porttype.pack(anchor=tk.E)
         # ===== ポート指定種別(プルダウン):終わり =====
 
         self.txWidgets["entry_port_st"] = entry_port_st
@@ -227,10 +233,12 @@ class TxField:
         frame0 = ttk.Frame(parent_frame)
         frame0.pack()
 
-        entry_datalen = CommonWidget.set_label_entry(
-            frame0, "データ長", 6, self.txParams.datalen)
-        entry_pps = CommonWidget.set_label_entry(
-            frame0, "送信パケット数/秒", 6, self.txParams.pps)
+        entry_datalen = CommonWidget.LabelEntry(
+            frame0, text="データ長", width=6, textvariable=self.txParams.datalen)
+        entry_datalen.pack(side=tk.LEFT)
+        entry_pps = CommonWidget.LabelEntry(
+            frame0, text="送信パケット数/秒", width=6, textvariable=self.txParams.pps)
+        entry_pps.pack(side=tk.LEFT)
 
         check_unlimited = HachiUtil.CheckUnlimited(
             self.txParams.unlimited, entry_pps)
@@ -255,12 +263,12 @@ class TxField:
         frame = ttk.LabelFrame(parent_frame, text="送信モニター")
         frame.pack()
 
-        CommonWidget.set_label_disable_entry(
-            frame, "送信数/秒", 7, self.txParams.real_pps)
-        CommonWidget.set_label_disable_entry(
-            frame, "データ長(Byte)", 6, self.txParams.datalen)
-        CommonWidget.set_label_disable_entry(
-            frame, "bps換算", 9, self.txParams.real_bps)
+        CommonWidget.LabelReadonlyEntry(
+            frame, text="送信数/秒", width=7, textvariable=self.txParams.real_pps)
+        CommonWidget.LabelReadonlyEntry(
+            frame, text="データ長(Byte)", width=6, textvariable=self.txParams.datalen)
+        CommonWidget.LabelReadonlyEntry(
+            frame, text="bps換算", width=9, textvariable=self.txParams.real_bps)
 
     # ===== 送信ボタン =====
     def _set_controller_field(self, parent_frame):
@@ -269,5 +277,5 @@ class TxField:
             parent_frame, textvariable=self.txParams.send_btn_text, command=sendAction)
         button.pack(side=tk.LEFT)
 
-        CommonWidget.set_label_disable_entry(
-            parent_frame, "送信元ポート", 6, self.txParams.srcport)
+        CommonWidget.LabelReadonlyEntry(
+            parent_frame, text="送信元ポート", width=6, textvariable=self.txParams.srcport)
