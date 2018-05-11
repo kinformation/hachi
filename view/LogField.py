@@ -14,6 +14,6 @@ class LogField:
 
     def _set_log_field(self, parent_frame):
         log_area = scrolledtext.ScrolledText(parent_frame, height=8)
-        log_area.pack()
+        log_area.pack(fill=tk.X)
         # ここでLogControllerを最初に呼ぶこと
         LogController.LogController(log_area)
