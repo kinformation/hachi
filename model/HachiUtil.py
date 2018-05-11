@@ -10,8 +10,8 @@ import netifaces
 import ipaddress
 
 
-# 指定バイト数のランダムバイナリデータ作成
 def ramdom_binary(len):
+    """ 指定バイト数のランダムバイナリデータ生成 """
     return b''.join([struct.pack("B", random.randint(0, 255)) for i in range(0, len)])
 
 
@@ -67,24 +67,28 @@ class ChangePortState:
 
 
 class LocalAddress:
-    """ ローカルIPアドレス(v4,v6)取得 """
+    """ ローカルIPアドレス(v4,v6)管理 """
 
-    def __call__(self):
-        list = []
+    def __init__(self):
+        self.list = []
         for ifname in netifaces.interfaces():
             ifaddr = netifaces.ifaddresses(ifname)
             # IPv4
             if netifaces.AF_INET in ifaddr:
                 addr4 = ifaddr[netifaces.AF_INET][0]['addr']
                 if self._check_addr(addr4) == True:
-                    list.append(addr4)
+                    self.list.append(addr4)
             # IPv6
             if netifaces.AF_INET6 in ifaddr:
                 addr6 = ifaddr[netifaces.AF_INET6][0]['addr']
                 if self._check_addr(addr6) == True:
-                    list.append(addr6)
+                    self.list.append(addr6)
 
-        return list
+    def __call__(self):
+        return self.list
+
+    def is_localaddress(self, addr):
+        return addr in self.list
 
     def _check_addr(self, addr):
         try:

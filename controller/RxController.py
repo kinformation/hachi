@@ -3,7 +3,7 @@
 from tkinter import messagebox
 import ipaddress
 
-from model import RecvTcpThread, RecvUdpThread, RecvMonitorThread
+from model import RecvTcpThread, RecvUdpThread, RecvMonitorThread, HachiUtil
 from controller import LogController
 
 
@@ -98,12 +98,10 @@ class RecvAction:
         ret = True
         msg = ""
 
-        # IPフォーマットチェック
-        try:
-            ipaddress.ip_address(self.host.get())
-        except:
-            # IPアドレス形式ではない
-            msg += "・IPアドレスの指定が不正です。\n"
+        # IPアドレスチェック
+        if not HachiUtil.LocalAddress().is_localaddress(self.host.get()):
+            # インタフェースなし
+            msg += "・指定した待受IPアドレスがインターフェースにありません。\n"
             ret = False
 
         # ポート番号 0～65535
