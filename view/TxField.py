@@ -278,4 +278,4 @@ class TxField:
         button.pack(side=tk.LEFT)
 
         CommonWidget.LabelReadonlyEntry(
-            parent_frame, text="送信元ポート", width=6, textvariable=self.txParams.srcport)
+            parent_frame, text="送信元ポート", width=6, textvariable=self.txParams.srcport).pack(side=tk.LEFT)
