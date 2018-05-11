@@ -103,12 +103,12 @@ class LocalAddress:
 class CheckUnlimited:
     """ 送信フィールドで"最高速"有効時に"送信パケット数/秒"非活性 """
 
-    def __init__(self, check_flg, pps_obj):
-        self.check_flg = check_flg
+    def __init__(self, check_variable, pps_obj):
+        self.check_variable = check_variable
         self.pps_obj = pps_obj
 
     def __call__(self, * args):
-        if self.check_flg.get():
+        if self.check_variable.get():
             self.pps_obj.state(['disabled'])
         else:
             self.pps_obj.state(['!disabled'])

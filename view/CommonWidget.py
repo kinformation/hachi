@@ -9,9 +9,11 @@ class LabelEntry(ttk.Frame):
     def __init__(self, master=None, text=None, width=None, textvariable=None):
         ttk.Frame.__init__(self, master)
         # Label
-        ttk.Label(self, text=text).pack(side=tk.LEFT)
+        self.Label = ttk.Label(self, text=text)
+        self.Label.pack(side=tk.LEFT)
         # Entry
-        ttk.Entry(self, width=width, textvariable=textvariable).pack()
+        self.Entry = ttk.Entry(self, width=width, textvariable=textvariable)
+        self.Entry.pack()
 
 
 class LabelReadonlyEntry(ttk.Frame):
@@ -19,9 +21,10 @@ class LabelReadonlyEntry(ttk.Frame):
     def __init__(self, master=None, text=None, width=None, textvariable=None):
         ttk.Frame.__init__(self, master)
         # Label
-        ttk.Label(self, text=text).pack()
+        self.Label = ttk.Label(self, text=text)
+        self.Label.pack()
         # Entry
-        entry = ttk.Entry(self, width=width,
-                          textvariable=textvariable, justify=tk.RIGHT)
-        entry.state(['readonly'])
-        entry.pack()
+        self.Entry = ttk.Entry(self, width=width,
+                               textvariable=textvariable, justify=tk.RIGHT)
+        self.Entry.state(['readonly'])
+        self.Entry.pack()

@@ -245,7 +245,7 @@ class TxField:
         entry_pps.pack(side=tk.LEFT)
 
         check_unlimited = HachiUtil.CheckUnlimited(
-            self.txParams.unlimited, entry_pps)
+            self.txParams.unlimited, entry_pps.Entry)
         chbtn_unlimited = ttk.Checkbutton(
             frame0, text='最高速', variable=self.txParams.unlimited, command=check_unlimited)
         chbtn_unlimited.pack(side=tk.LEFT)
