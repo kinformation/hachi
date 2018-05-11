@@ -156,11 +156,11 @@ class RxField:
         frame.pack()
 
         CommonWidget.LabelReadonlyEntry(
-            frame, text="受信数/秒", width=7, textvariable=self.rxParams.real_pps)
+            frame, text="受信数/秒", width=7, textvariable=self.rxParams.real_pps).pack(side=tk.LEFT)
         CommonWidget.LabelReadonlyEntry(
-            frame, text="データ長(Byte)", width=6, textvariable=self.rxParams.real_datalen)
+            frame, text="データ長(Byte)", width=6, textvariable=self.rxParams.real_datalen).pack(side=tk.LEFT)
         CommonWidget.LabelReadonlyEntry(
-            frame, text="bps換算", width=9, textvariable=self.rxParams.real_bps)
+            frame, text="bps換算", width=9, textvariable=self.rxParams.real_bps).pack(side=tk.LEFT)
 
     # ===== 受信ボタン =====
     def _set_controller_field(self, parent_frame):

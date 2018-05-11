@@ -264,11 +264,11 @@ class TxField:
         frame.pack()
 
         CommonWidget.LabelReadonlyEntry(
-            frame, text="送信数/秒", width=7, textvariable=self.txParams.real_pps)
+            frame, text="送信数/秒", width=7, textvariable=self.txParams.real_pps).pack(side=tk.LEFT)
         CommonWidget.LabelReadonlyEntry(
-            frame, text="データ長(Byte)", width=6, textvariable=self.txParams.datalen)
+            frame, text="データ長(Byte)", width=6, textvariable=self.txParams.datalen).pack(side=tk.LEFT)
         CommonWidget.LabelReadonlyEntry(
-            frame, text="bps換算", width=9, textvariable=self.txParams.real_bps)
+            frame, text="bps換算", width=9, textvariable=self.txParams.real_bps).pack(side=tk.LEFT)
 
     # ===== 送信ボタン =====
     def _set_controller_field(self, parent_frame):
