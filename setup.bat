@@ -6,4 +6,3 @@ python -OO -m PyInstaller hachi.py ^
   --icon hachi.ico
 
 rmdir /s /q build
-rmdir /s /q dist
