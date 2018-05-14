@@ -139,6 +139,10 @@ class SendAction:
         datalen = self.params.datalen.get()
         pps = self.params.pps.get()
 
+        # ポートタイプが単一なら、dstport_edをdstport_stに合わせる
+        if self.params.dstport_type.get() == '単一':
+            dstport_ed = dstport_st
+
         # IPフォーマットチェック
         try:
             ipaddress.ip_address(host)

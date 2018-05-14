@@ -226,6 +226,16 @@ class TxField:
         combo_porttype.pack(anchor=tk.E)
         # ===== ポート指定種別(プルダウン):終わり =====
 
+        # ===== プロトコルがUDPの時だけポート指定種別選択を有効化 =====
+        # アクションクラス
+        porttype_udponly = HachiUtil.ChangeSendProto(
+            self.txParams.proto, combo_porttype, self.txParams.dstport_type)
+        # ラジオボタンの値更新時に発火するよう登録
+        self.txParams.proto.trace("w", porttype_udponly)
+        # 初回実行
+        porttype_udponly()
+        # ===== プロトコルがUDPの時だけポート指定種別選択を有効化:終わり =====
+
         self.txWidgets["entry_port_st"] = entry_port_st
         self.txWidgets["entry_port_ed"] = entry_port_ed
         self.txWidgets["combo_porttype"] = combo_porttype

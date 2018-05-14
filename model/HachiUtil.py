@@ -112,3 +112,21 @@ class CheckUnlimited:
             self.pps_obj.state(['disabled'])
         else:
             self.pps_obj.state(['!disabled'])
+
+
+class ChangeSendProto:
+    """ 送信プロトコル選択変更時の動作 """
+
+    def __init__(self, proto, porttype, porttype_val):
+        self.proto = proto
+        self.porttype = porttype
+        self.porttype_val = porttype_val
+
+    def __call__(self, *args):
+        # 送信プロトコル：UDP
+        if self.proto.get() == 1:
+            self.porttype.state(['!disabled'])
+        # 送信プロトコル：UDP以外
+        else:
+            self.porttype_val.set('単一')
+            self.porttype.state(['disabled'])
