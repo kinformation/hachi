@@ -30,3 +30,24 @@ class SaveLog:
         f = open(filename, 'w')
         f.write(log)
         f.close()
+
+
+class TaskPriority:
+    def __init__(self, priority):
+        self.priority = priority
+
+    def __call__(self):
+        self._setpriority(priority=self.priority.get())
+
+    def _setpriority(self, pid=None, priority=1):
+        import win32api
+        import win32process
+        import win32con
+
+        priorityclasses = [win32process.IDLE_PRIORITY_CLASS,
+                           win32process.NORMAL_PRIORITY_CLASS,
+                           win32process.HIGH_PRIORITY_CLASS]
+        if pid == None:
+            pid = win32api.GetCurrentProcessId()
+        handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, True, pid)
+        win32process.SetPriorityClass(handle, priorityclasses[priority])

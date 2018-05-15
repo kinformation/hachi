@@ -286,4 +286,4 @@ class TxField:
         sendAction = TxController.SendAction(self.txParams, self.txWidgets)
         button = ttk.Button(
             parent_frame, textvariable=self.txParams.send_btn_text, command=sendAction)
-        button.pack(side=tk.LEFT, ipady=10)
+        button.pack(side=tk.LEFT, ipady=5)

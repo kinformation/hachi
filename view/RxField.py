@@ -165,6 +165,6 @@ class RxField:
         recvAction = RxController.RecvAction(self.rxParams, self.rxWidgets)
         button = ttk.Button(
             parent_frame, textvariable=self.rxParams.recv_btn_text, command=recvAction)
-        button.pack(side=tk.LEFT, ipady=10)
+        button.pack(side=tk.LEFT, ipady=5)
         # 必要なら復活させる
         # ttk.Checkbutton(parent_frame, text='ログ').pack(side=tk.LEFT)
