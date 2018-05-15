@@ -12,7 +12,7 @@ class ShowVersion:
     def __call__(self):
         msg = """
 Hachi
-Version 1.0.0
+Version 1.1.0
 
 Copyright (c) 2018 k.kanatani
 """[1:-1]
