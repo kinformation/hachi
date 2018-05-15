@@ -4,14 +4,12 @@ import tkinter as tk
 from tkinter import ttk
 
 from model import HachiUtil
-from view import CommonWidget
+from view import Common
 from controller import TxController
 
 
 class TxParams:
-    """
-    パケット送信パラメータクラス
-    """
+    """ パケット送信パラメータクラス """
 
     def __init__(self):
         self.__proto = tk.IntVar(value=1)
@@ -104,22 +102,19 @@ class TxField:
         self.txParams = TxParams()
         # パケット送信中に非活性するウィジェットを格納(辞書型)
         self.txWidgets = {}
-        # 送信フィールド描画開始
+        # 送信領域描画
         self._set_tx_field(master)
 
     # ===== 送信フィールド =====
     def _set_tx_field(self, parent_frame):
-        frame = ttk.Frame(parent_frame)
-        frame.pack()
-
         # 左ペイン(送信設定)
-        left_frame = ttk.LabelFrame(frame, text="送信設定")
-        left_frame.pack(side=tk.LEFT, anchor=tk.NW)
+        left_frame = ttk.LabelFrame(parent_frame, text="送信設定")
+        left_frame.grid(row=1, column=0, sticky=tk.NW+tk.E)
         self._set_left_field(left_frame)
 
         # 右ペイン(モニタ、コントローラ)
-        right_frame = ttk.Frame(frame)
-        right_frame.pack(side=tk.LEFT, anchor=tk.NW)
+        right_frame = ttk.Frame(parent_frame)
+        right_frame.grid(row=1, column=1, sticky=tk.NW)
         self._set_right_field(right_frame)
 
     # ===== 送信フィールド:左ペイン =====
@@ -177,7 +172,7 @@ class TxField:
         frame = ttk.LabelFrame(parent_frame, text="送信先設定")
         frame.pack()
 
-        entry_host = CommonWidget.LabelEntry(
+        entry_host = Common.LabelEntry(
             frame, text="IPアドレス", width=30, textvariable=self.txParams.host)
         entry_host.pack(side=tk.LEFT, anchor=tk.N)
         self.txWidgets["entry_host"] = entry_host
@@ -247,10 +242,10 @@ class TxField:
         frame0 = ttk.Frame(parent_frame)
         frame0.pack()
 
-        entry_datalen = CommonWidget.LabelEntry(
+        entry_datalen = Common.LabelEntry(
             frame0, text="データ長", width=6, textvariable=self.txParams.datalen)
         entry_datalen.pack(side=tk.LEFT)
-        entry_pps = CommonWidget.LabelEntry(
+        entry_pps = Common.LabelEntry(
             frame0, text="送信パケット数/秒", width=6, textvariable=self.txParams.pps)
         entry_pps.pack(side=tk.LEFT)
 
@@ -277,19 +272,18 @@ class TxField:
         frame = ttk.LabelFrame(parent_frame, text="送信モニター")
         frame.pack()
 
-        CommonWidget.LabelReadonlyEntry(
-            frame, text="送信数/秒", width=7, textvariable=self.txParams.real_pps).pack(side=tk.LEFT)
-        CommonWidget.LabelReadonlyEntry(
-            frame, text="データ長(Byte)", width=6, textvariable=self.txParams.datalen).pack(side=tk.LEFT)
-        CommonWidget.LabelReadonlyEntry(
-            frame, text="bps換算", width=9, textvariable=self.txParams.real_bps).pack(side=tk.LEFT)
+        Common.LabelReadonlyEntry(
+            frame, text="送信数/秒", width=7, textvariable=self.txParams.real_pps).grid(row=0, column=0)
+        Common.LabelReadonlyEntry(
+            frame, text="データ長(Byte)", width=6, textvariable=self.txParams.datalen).grid(row=0, column=1)
+        Common.LabelReadonlyEntry(
+            frame, text="bps換算", width=9, textvariable=self.txParams.real_bps).grid(row=0, column=2)
+        Common.LabelReadonlyEntry(
+            frame, text="送信元ポート", width=6, textvariable=self.txParams.srcport).grid(row=1, column=0, columnspan=3, sticky=tk.W)
 
     # ===== 送信ボタン =====
     def _set_controller_field(self, parent_frame):
         sendAction = TxController.SendAction(self.txParams, self.txWidgets)
         button = ttk.Button(
             parent_frame, textvariable=self.txParams.send_btn_text, command=sendAction)
-        button.pack(side=tk.LEFT)
-
-        CommonWidget.LabelReadonlyEntry(
-            parent_frame, text="送信元ポート", width=6, textvariable=self.txParams.srcport).pack(side=tk.LEFT)
+        button.pack(side=tk.LEFT, ipady=10)

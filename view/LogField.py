@@ -14,6 +14,6 @@ class LogField:
 
     def _set_log_field(self, parent_frame):
         log_area = scrolledtext.ScrolledText(parent_frame, height=8)
-        log_area.pack(fill=tk.X)
+        log_area.grid(row=2, column=0, columnspan=2, sticky=tk.W+tk.E)
         # ここでLogControllerを最初に呼ぶこと
         LogController.LogController(log_area)

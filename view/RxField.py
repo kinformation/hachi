@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from model import HachiUtil
-from view import CommonWidget
+from view import Common
 from controller import RxController
 
 
@@ -67,20 +67,15 @@ class RxField:
 
     # ===== 受信フィールド =====
     def _set_rx_field(self, parent_frame):
-        frame = ttk.Frame(parent_frame)
-
         # 左ペイン(受信設定)
-        left_frame = ttk.LabelFrame(frame, text="受信設定")
+        left_frame = ttk.LabelFrame(parent_frame, text="受信設定")
+        left_frame.grid(row=0, column=0, sticky=tk.NW+tk.E)
         self._set_left_field(left_frame)
 
         # 右ペイン(モニタ、コントローラ)
-        right_frame = ttk.Frame(frame)
+        right_frame = ttk.Frame(parent_frame)
+        right_frame.grid(row=0, column=1, sticky=tk.NW)
         self._set_right_field(right_frame)
-
-        # 描画(左ペインを広げたいのでこの順番)
-        frame.pack(fill=tk.X)
-        right_frame.pack(side=tk.RIGHT)
-        left_frame.pack(fill=tk.X)
 
     # ===== 受信フィールド:左ペイン =====
     def _set_left_field(self, parent_frame):
@@ -146,7 +141,7 @@ class RxField:
         # combo_host.state(['readonly'])
         combo_host.pack(side=tk.LEFT)
 
-        entry_port = CommonWidget.LabelEntry(
+        entry_port = Common.LabelEntry(
             frame, text="ポート", width=6, textvariable=self.rxParams.port)
         entry_port.pack(side=tk.LEFT)
 
@@ -158,11 +153,11 @@ class RxField:
         frame = ttk.LabelFrame(parent_frame, text="受信モニター")
         frame.pack()
 
-        CommonWidget.LabelReadonlyEntry(
+        Common.LabelReadonlyEntry(
             frame, text="受信数/秒", width=7, textvariable=self.rxParams.real_pps).pack(side=tk.LEFT)
-        CommonWidget.LabelReadonlyEntry(
+        Common.LabelReadonlyEntry(
             frame, text="データ長(Byte)", width=6, textvariable=self.rxParams.real_datalen).pack(side=tk.LEFT)
-        CommonWidget.LabelReadonlyEntry(
+        Common.LabelReadonlyEntry(
             frame, text="bps換算", width=9, textvariable=self.rxParams.real_bps).pack(side=tk.LEFT)
 
     # ===== 受信ボタン =====
@@ -170,6 +165,6 @@ class RxField:
         recvAction = RxController.RecvAction(self.rxParams, self.rxWidgets)
         button = ttk.Button(
             parent_frame, textvariable=self.rxParams.recv_btn_text, command=recvAction)
-        button.pack(side=tk.LEFT)
+        button.pack(side=tk.LEFT, ipady=10)
         # 必要なら復活させる
         # ttk.Checkbutton(parent_frame, text='ログ').pack(side=tk.LEFT)

@@ -5,7 +5,8 @@ from tkinter import ttk
 
 
 class LabelEntry(ttk.Frame):
-    # ラベル付きEntry（横並び）
+    """ ラベル付きEntry（横並び） """
+
     def __init__(self, master=None, text=None, width=None, textvariable=None):
         ttk.Frame.__init__(self, master)
         # Label
@@ -17,7 +18,8 @@ class LabelEntry(ttk.Frame):
 
 
 class LabelReadonlyEntry(ttk.Frame):
-    # ラベル付き非活性Entry（縦並び）
+    """ ラベル付き非活性Entry（縦並び） """
+
     def __init__(self, master=None, text=None, width=None, textvariable=None):
         ttk.Frame.__init__(self, master)
         # Label
