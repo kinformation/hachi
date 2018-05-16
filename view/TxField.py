@@ -95,7 +95,7 @@ class TxParams:
 
 
 class TxField:
-    """送信領域設定クラス"""
+    """送信領域表示設定クラス"""
 
     def __init__(self, master):
         # 各種パラメータ格納クラス
@@ -103,74 +103,94 @@ class TxField:
         # パケット送信中に非活性するウィジェットを格納(辞書型)
         self.txWidgets = {}
         # 送信領域描画
-        self._set_tx_field(master)
+        self._tx_field(master)
 
-    # ===== 送信フィールド =====
-    def _set_tx_field(self, parent_frame):
-        # 左ペイン(送信設定)
-        left_frame = ttk.LabelFrame(parent_frame, text="送信設定")
+    def _tx_field(self, master):
+        """ 送信フィールド表示設定 """
+
+        # 送信設定(左側)
+        left_frame = ttk.LabelFrame(master, text="送信設定")
         left_frame.grid(row=1, column=0, sticky=tk.NW+tk.E)
-        self._set_left_field(left_frame)
+        self._left_field(left_frame)
 
-        # 右ペイン(モニタ、コントローラ)
-        right_frame = ttk.Frame(parent_frame)
+        # モニタ、コントローラ(右側)
+        right_frame = ttk.Frame(master)
         right_frame.grid(row=1, column=1, sticky=tk.NW)
-        self._set_right_field(right_frame)
+        self._right_field(right_frame)
 
-    # ===== 送信フィールド:左ペイン =====
-    def _set_left_field(self, parent_frame):
-        # 左上ペイン(使用プロトコル)
-        frame0 = ttk.Frame(parent_frame)
-        frame0.pack(anchor=tk.NW)
-        self._set_proto_field(frame0)
+    # ============= レイヤー1 =============
 
-        # 左中ペイン(送信先設定)
-        frame1 = ttk.Frame(parent_frame)
-        frame1.pack(anchor=tk.NW)
-        self._set_addr_field(frame1)
+    def _left_field(self, master):
+        """ 送信フィールド左側表示設定 """
 
-        # 左下ペイン(送信パラメタ設定)
-        frame2 = ttk.Frame(parent_frame)
-        frame2.pack(anchor=tk.NW)
-        self._set_param_field(frame2)
+        # 使用プロトコル(1列目)
+        frame_proto = ttk.Frame(master)
+        frame_proto.pack(anchor=tk.NW)
+        self._proto_field(frame_proto)
 
-    # ===== 送信フィールド:右ペイン =====
-    def _set_right_field(self, parent_frame):
-        # 右上ペイン(送信モニター)
-        frame0 = ttk.Frame(parent_frame)
-        frame0.pack(anchor=tk.NW)
-        self._set_monitor_field(frame0)
+        # 送信先設定(2列目)
+        frame_dst = ttk.Frame(master)
+        frame_dst.pack(anchor=tk.NW)
+        self._dst_addr_field(frame_dst)
 
-        # 右下ペイン(送信ボタン)
-        frame1 = ttk.Frame(parent_frame)
-        frame1.pack(fill=tk.BOTH)
-        self._set_controller_field(frame1)
+        # 送信元設定(3列目)
+        frame_src = ttk.Frame(master)
+        frame_src.pack(anchor=tk.NW)
+        self._dst_addr_field(frame_src)
 
-    # ===== 使用プロトコル =====
-    def _set_proto_field(self, parent_frame):
-        frame = ttk.LabelFrame(parent_frame, text="使用プロトコル")
+        # 送信パラメータ設定(4列目)
+        frame_param = ttk.Frame(master)
+        frame_param.pack(anchor=tk.NW)
+        self._set_param_field(frame_param)
+
+    def _right_field(self, master):
+        """ 送信フィールド右側表示設定 """
+
+        # 送信モニター(1列目)
+        frame_monitor = ttk.Frame(master)
+        frame_monitor.pack(anchor=tk.NW)
+        self._monitor_field(frame_monitor)
+
+        # コントローラ(2列目)
+        frame_controller = ttk.Frame(master)
+        frame_controller.pack(anchor=tk.NW)
+        self._controller_field(frame_controller)
+
+    # ============= レイヤー2 =============
+
+    def _proto_field(self, master):
+        """ 使用プロトコル表示設定 """
+
+        frame = ttk.LabelFrame(master, text="使用プロトコル")
         frame.pack(side=tk.LEFT)
 
-        radio_tcp = ttk.Radiobutton(
-            frame, text="TCP", value=0, variable=self.txParams.proto)
-        radio_udp = ttk.Radiobutton(
-            frame, text="UDP", value=1, variable=self.txParams.proto)
-        radio_org = ttk.Radiobutton(
-            frame, text="Original", value=2, variable=self.txParams.proto)
+        # プロトコルリスト
+        radio_item = {
+            'radio_tcp': {'text': "TCP", 'value': 0},
+            'radio_udp': {'text': "UDP", 'value': 1},
+            # originalは使わなさそうなので除外
+            # 'radio_org': {'text': "Original", 'value': 2},
+        }
 
-        radio_tcp.pack(side=tk.LEFT)
-        radio_udp.pack(side=tk.LEFT)
-        # originalは使わなさそうなので、いったん除外
-        # radio_org.pack(side=tk.LEFT)
+        for key, val in radio_item.items():
+            item = ttk.Radiobutton(
+                frame, text=val['text'], value=val['value'], variable=self.txParams.proto)
+            item.pack(side=tk.LEFT)
+            self.txWidgets[key] = item
 
-        self.txWidgets["radio_tcp"] = radio_tcp
-        self.txWidgets["radio_udp"] = radio_udp
-        self.txWidgets["radio_org"] = radio_org
+    def _dst_addr_field(self, parent_frame):
+        """ 送信先設定表示設定 """
 
-    # ===== 送信先設定 =====
-    def _set_addr_field(self, parent_frame):
         frame = ttk.LabelFrame(parent_frame, text="送信先設定")
         frame.pack()
+
+        entry_host = Common.LabelEntry(
+            frame, text="IPアドレス", width=30, textvariable=self.txParams.host)
+        entry_host.pack(side=tk.LEFT, anchor=tk.N)
+        self.txWidgets["entry_host"] = entry_host.Entry
+
+        # ポート設定
+        self._set_port_field(frame)
 
         entry_host = Common.LabelEntry(
             frame, text="IPアドレス", width=30, textvariable=self.txParams.host)
@@ -188,7 +208,7 @@ class TxField:
 
         # ===== 宛先ポート入力 =====
         frame_port = ttk.Frame(frame)
-        frame_port.pack(side=tk.TOP)
+        frame_port.pack(side=tk.LEFT)
 
         # Label("ポート")
         ttk.Label(frame_port, text="ポート").pack(side=tk.LEFT)
@@ -235,54 +255,60 @@ class TxField:
         self.txWidgets["entry_port_ed"] = entry_port_ed
         self.txWidgets["combo_porttype"] = combo_porttype
 
-    # ===== 送信パラメタ設定 =====
-    def _set_param_field(self, parent_frame):
+    def _set_param_field(self, master):
+        """ 送信パラメータ設定表示設定 """
 
-        # 上段
-        frame0 = ttk.Frame(parent_frame)
-        frame0.pack()
-
+        # データ長
         entry_datalen = Common.LabelEntry(
-            frame0, text="データ長", width=6, textvariable=self.txParams.datalen)
+            master, text="データ長", width=6, textvariable=self.txParams.datalen)
         entry_datalen.pack(side=tk.LEFT)
+
+        # 送信パケット数/秒
         entry_pps = Common.LabelEntry(
-            frame0, text="送信パケット数/秒", width=6, textvariable=self.txParams.pps)
+            master, text="送信パケット数/秒", width=6, textvariable=self.txParams.pps)
         entry_pps.pack(side=tk.LEFT)
 
+        # 最高速
         check_unlimited = HachiUtil.CheckUnlimited(
             self.txParams.unlimited, entry_pps.Entry)
         chbtn_unlimited = ttk.Checkbutton(
-            frame0, text='最高速', variable=self.txParams.unlimited, command=check_unlimited)
+            master, text='最高速', variable=self.txParams.unlimited, command=check_unlimited)
         chbtn_unlimited.pack(side=tk.LEFT)
+
+        # 送信速度の目安
+        ttk.Label(master, text="送信速度の目安:   ").pack(side=tk.LEFT)
+        ttk.Label(master, textvariable=self.txParams.predicted_bps).pack(
+            side=tk.LEFT)
 
         self.txWidgets["entry_datalen"] = entry_datalen.Entry
         self.txWidgets["entry_pps"] = entry_pps.Entry
         self.txWidgets["chbtn_unlimited"] = chbtn_unlimited
 
-        # 下段
-        frame1 = ttk.Frame(parent_frame)
-        frame1.pack(anchor=tk.NW)
+    def _monitor_field(self, master):
+        """ 送信モニター表示設定 """
 
-        ttk.Label(frame1, text="送信速度の目安:   ").pack(side=tk.LEFT)
-        ttk.Label(frame1, textvariable=self.txParams.predicted_bps).pack(
-            side=tk.LEFT)
-
-    # ===== 送信モニター =====
-    def _set_monitor_field(self, parent_frame):
-        frame = ttk.LabelFrame(parent_frame, text="送信モニター")
+        frame = ttk.LabelFrame(master, text="送信モニター")
         frame.pack()
 
-        Common.LabelReadonlyEntry(
-            frame, text="送信数/秒", width=7, textvariable=self.txParams.real_pps).grid(row=0, column=0)
-        Common.LabelReadonlyEntry(
-            frame, text="データ長(Byte)", width=6, textvariable=self.txParams.datalen).grid(row=0, column=1)
-        Common.LabelReadonlyEntry(
-            frame, text="bps換算", width=9, textvariable=self.txParams.real_bps).grid(row=0, column=2)
-        Common.LabelReadonlyEntry(
-            frame, text="送信元ポート", width=6, textvariable=self.txParams.srcport).grid(row=1, column=0, columnspan=3, sticky=tk.W)
+        # 送信数/秒
+        Common.LabelReadonlyEntry(frame, text="送信数/秒", width=7,
+                                  textvariable=self.txParams.real_pps).grid(row=0, column=0)
 
-    # ===== 送信ボタン =====
-    def _set_controller_field(self, parent_frame):
+        # データ長(Byte)
+        Common.LabelReadonlyEntry(frame, text="データ長(Byte)", width=6,
+                                  textvariable=self.txParams.datalen).grid(row=0, column=1)
+
+        # bps換算
+        Common.LabelReadonlyEntry(frame, text="bps換算", width=9,
+                                  textvariable=self.txParams.real_bps).grid(row=0, column=2)
+
+        # 送信元ポート
+        Common.LabelReadonlyEntry(frame, text="送信元ポート", width=6, textvariable=self.txParams.srcport).grid(
+            row=1, column=0, columnspan=3, sticky=tk.W)
+
+    def _controller_field(self, parent_frame):
+        """ コントローラ(送信ボタン)表示設定 """
+
         sendAction = TxController.SendAction(self.txParams, self.txWidgets)
         button = ttk.Button(
             parent_frame, textvariable=self.txParams.send_btn_text, command=sendAction)
