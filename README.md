@@ -3,17 +3,17 @@ Hachi
 
 ネットワークの通信負荷&スループット測定GUIツール
 
-## Description
+## 概要
 
 `Hachi`はTCP/UDPパケットによるネットワークのトラフィック負荷テストや、スループット計測に利用できます。
 スループット計測する場合はクライアント側とサーバ側両方の端末で動作させてください。
 類似ツール[`Nana`](https://www.vector.co.jp/soft/winnt/net/se168678.html)と互換を持たせてあるため、Nana<=>Hachiの組み合わせでもスループット計測は可能です。
 
-## Demo
+## イメージ
 
 ![画面キャプチャ](capture.png)
 
-## VS.
+## `Nana`との対比
 
 ### サーバ機能
 
@@ -37,7 +37,7 @@ Hachi
 |宛先IPアドレス指定|○|○|
 |宛先ポート指定|○|○|
 |複数宛先ポート指定|×|○ ※UDPのみ|
-|パケットデータ長設定|○|○|
+|パケットデータ長設定|○ (1,500 byteまで)|○ (9,000 byteまで)|
 |パケット数/秒設定|○|○|
 |最高速パケット送信|○|○|
 |スループット計測|送信パケット数/秒<br>１パケットあたりのデータ長<br>bps|送信パケット数/秒<br>１パケットあたりのデータ長<br>bps|
@@ -48,16 +48,21 @@ Hachi
 ||Nana|Hachi|
 |:--|:--|:--|
 |ログの保存|○|○|
-|タスク優先度指定|○|×|
+|タスク優先度指定|○|○|
 |TypeOfService設定|○|×|
 |TimeToLive設定|○|×|
 |送信パケットデータ長のランダム変化|○|×|
 |送信パケット数/秒のランダム変化|○|×|
 
-## Install
+## インストール
 
 適当なディレクトリに`hachi.exe`を置いて実行してください。
 アンインストールは配置した`hachi.exe`を削除して下さい。
+
+### 動作確認環境
+
+- Windows 7(32bit/64bit)
+- Windows 10(64bit)
 
 ## Change Log
 
@@ -66,14 +71,14 @@ Hachi
 - v1.0.0(2018/04/27)
   - 初回リリース
 
-## Build
+## ソースビルド
 
 本ソフトウェアはPythonプログラムを`PyInstaller`で実行可能ファイルにパッケージングしています。
 
 ### ビルド環境
 
 * Windows 7 64bit
-* Python 3.6.4
+* Python 3.6.5(32-bit)
 
 ### 依存パッケージ
 
@@ -86,10 +91,10 @@ Hachi
 setup.bat
 ```
 
-## Licence
+## ライセンス情報
 
 [MIT](https://github.com/kinformation/hachi/blob/master/LICENSE.txt)
 
-## Author
+## 作者
 
 [kinformation](https://github.com/kinformation)

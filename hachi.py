@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import tkinter as tk
 from tkinter import ttk
 
@@ -17,8 +18,7 @@ class App():
         # ウィンドウサイズ変更禁止
         master.resizable(0, 0)
         # アイコン
-        icon = "{}/hachi.ico".format(os.path.dirname(
-            os.path.abspath(__file__)))
+        icon = self.resource_path('hachi.ico')
         master.iconbitmap(icon)
 
         # ===== メニューバー =====
@@ -30,6 +30,11 @@ class App():
         RxField.RxField(master)
         TxField.TxField(master)
         LogField.LogField(master)
+
+    def resource_path(self, relative):
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative)
+        return os.path.join(relative)
 
 
 if __name__ == '__main__':
