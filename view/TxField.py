@@ -175,7 +175,7 @@ class TxField:
         entry_host = Common.LabelEntry(
             frame, text="IPアドレス", width=30, textvariable=self.txParams.host)
         entry_host.pack(side=tk.LEFT, anchor=tk.N)
-        self.txWidgets["entry_host"] = entry_host
+        self.txWidgets["entry_host"] = entry_host.Entry
 
         # ポート設定
         self._set_port_field(frame)
@@ -255,8 +255,8 @@ class TxField:
             frame0, text='最高速', variable=self.txParams.unlimited, command=check_unlimited)
         chbtn_unlimited.pack(side=tk.LEFT)
 
-        self.txWidgets["entry_datalen"] = entry_datalen
-        self.txWidgets["entry_pps"] = entry_pps
+        self.txWidgets["entry_datalen"] = entry_datalen.Entry
+        self.txWidgets["entry_pps"] = entry_pps.Entry
         self.txWidgets["chbtn_unlimited"] = chbtn_unlimited
 
         # 下段
