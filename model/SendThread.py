@@ -17,22 +17,17 @@ class SendThread(threading.Thread):
         self.unlimited = params.unlimited.get()
         self.freq = 1 / int(params.pps.get())
         self.payload = HachiUtil.ramdom_binary(int(params.datalen.get()))
-
-        # 送信先アドレスリスト生成
-        host = params.host.get()
-        dstport_list = self._dstport_list(
-            params.dstport_st.get(), params.dstport_ed.get(), params.dstport_type.get())
-        self.address_list = [(host, port) for port in dstport_list]
+        self.address_list = params.dstaddr.address_list()
 
         # srcportはIntVar()を渡す
-        self.srcport_obj = params.srcport
+        # self.srcport_obj = params.srcport
 
         self.counter = counter
         self.stop_flg = False
 
         # IPv4とIPv6でソケットファミリー分かれる
         self.family = socket.AF_INET if ipaddress.ip_address(
-            host).version == 4 else socket.AF_INET6
+            self.address_list[0][0]).version == 4 else socket.AF_INET6
 
     def run(self):
         # 下位クラスで定義
@@ -40,13 +35,3 @@ class SendThread(threading.Thread):
 
     def stop(self):
         self.stop_flg = True
-
-    def _dstport_list(self, start, end, _type):
-        if _type == "単一":
-            return [start]
-        elif _type == "ﾗｳﾝﾄﾞﾛﾋﾞﾝ":
-            # 必ずdstport_stが小さくなるようにする
-            if start > end:
-                start, end = end, start
-
-            return list(range(start, end+1))

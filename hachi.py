@@ -27,9 +27,9 @@ class App():
         MenuBar.MenuBar(menubar)
 
         # ===== メインフレーム =====
-        RxField.RxField(master)
-        TxField.TxField(master)
-        LogField.LogField(master)
+        # RxField.RxField(master)
+        TxField.show(master)
+        LogField.show(master)
 
     def resource_path(self, relative):
         if hasattr(sys, '_MEIPASS'):
