@@ -8,6 +8,8 @@ import socket
 import threading
 import ipaddress
 
+from controller import RxController
+
 
 class RecvThread(threading.Thread):
     def __init__(self, params, shareObj):
@@ -18,7 +20,7 @@ class RecvThread(threading.Thread):
         self.ip = params.ip.get()
         self.port = int(params.port.get())
         self.stop_flg = False
-        self.recv_buf = 9000
+        self.recv_buf = RxController.MAX_DATALEN
         self.address = (self.ip, self.port)
 
         # IPv4とIPv6でソケットファミリー分かれる

@@ -13,6 +13,8 @@ from controller import LogController
 DEF_PROTO = 1  # 0:TCP 1:UDP
 DEF_DST_PROT = 12000
 
+MAX_DATALEN = 9999
+
 # =================================
 # == 公開クラス
 # =================================
