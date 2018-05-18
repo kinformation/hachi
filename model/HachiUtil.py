@@ -55,20 +55,6 @@ class UpdateBps:
             self.bps_str.set("Unknown")
 
 
-class ChangePortState:
-    """ 送信先ポート(レンジ)ステータスの動的更新 """
-
-    def __init__(self, type, entry):
-        self.type = type
-        self.entry = entry
-
-    def __call__(self, *args):
-        if self.type.get() == "単一":
-            self.entry.state(['disabled'])
-        else:
-            self.entry.state(['!disabled'])
-
-
 class LocalAddress:
     """ ローカルIPアドレス(v4,v6)管理 """
 
@@ -87,7 +73,7 @@ class LocalAddress:
                 if self._check_addr(addr6) == True:
                     self.list.append(addr6)
 
-    def __call__(self):
+    def get(self):
         return self.list
 
     def is_localaddress(self, addr):
@@ -101,21 +87,3 @@ class LocalAddress:
         except:
             # IPアドレス形式じゃなければ除外
             return False
-
-
-class ChangeSendProto:
-    """ 送信プロトコル選択変更時の動作 """
-
-    def __init__(self, proto, porttype, porttype_val):
-        self.proto = proto
-        self.porttype = porttype
-        self.porttype_val = porttype_val
-
-    def __call__(self, *args):
-        # 送信プロトコル：UDP
-        if self.proto.get() == 1:
-            self.porttype.state(['!disabled'])
-        # 送信プロトコル：UDP以外
-        else:
-            self.porttype_val.set('単一')
-            self.porttype.state(['disabled'])

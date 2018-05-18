@@ -24,4 +24,4 @@ class LogField(scrolledtext.ScrolledText):
 
 
 def show(master):
-    LogField(master).grid(row=2, column=0, columnspan=2, sticky=tk.W+tk.E)
+    LogField(master).grid(row=5, column=0, columnspan=2, sticky=tk.W+tk.E)

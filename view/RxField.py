@@ -7,164 +7,119 @@ from model import HachiUtil
 from view import Common
 from controller import RxController
 
+# =================================
+# == グローバル変数
+# =================================
+rxWidgets = {}
 
-class RxParams:
-    """ パケット受信パラメータクラス """
-
-    def __init__(self):
-        self.__proto = tk.IntVar(value=1)
-        self.__host = tk.StringVar()
-        self.__port = tk.IntVar(value=12000)
-        self.__real_datalen = tk.IntVar(value=0)
-        self.__real_bps = tk.StringVar(value="0 bps")
-        self.__real_pps = tk.IntVar(value=0)
-        self.__recv_btn_text = tk.StringVar(value="受信開始")
-
-        updateBps = HachiUtil.UpdateBps(
-            self.__real_datalen, self.__real_pps, self.__real_bps)
-        # 値更新時に発火するよう登録
-        self.__real_pps.trace("w", updateBps)
-
-    @property
-    def proto(self):
-        return self.__proto
-
-    @property
-    def host(self):
-        return self.__host
-
-    @property
-    def port(self):
-        return self.__port
-
-    @property
-    def real_datalen(self):
-        return self.__real_datalen
-
-    @property
-    def real_bps(self):
-        return self.__real_bps
-
-    @property
-    def real_pps(self):
-        return self.__real_pps
-
-    @property
-    def recv_btn_text(self):
-        return self.__recv_btn_text
+# =================================
+# == 受信領域表示設定
+# =================================
 
 
-class RxField:
-    """ 表示領域の設定 """
+class SettingField(ttk.LabelFrame):
+    """ 受信設定フィールド """
 
     def __init__(self, master):
-        # 各種パラメータ格納クラス
-        self.rxParams = RxParams()
-        # パケット送信中に非活性するウィジェットを格納(辞書型)
-        self.rxWidgets = {}
-        # 受信フィールド描画開始
-        self._set_rx_field(master)
+        ttk.LabelFrame.__init__(self, master, text="受信設定")
 
-    # ===== 受信フィールド =====
-    def _set_rx_field(self, parent_frame):
-        # 左ペイン(受信設定)
-        left_frame = ttk.LabelFrame(parent_frame, text="受信設定")
-        left_frame.grid(row=0, column=0, sticky=tk.NW+tk.E)
-        self._set_left_field(left_frame)
+        # プロトコル設定(1列目)
+        ProtocolField(self).pack(anchor=tk.W)
+        # 受信先設定(2列目)
+        AcceptAddressField(self).pack()
 
-        # 右ペイン(モニタ、コントローラ)
-        right_frame = ttk.Frame(parent_frame)
-        right_frame.grid(row=0, column=1, sticky=tk.NW)
-        self._set_right_field(right_frame)
 
-    # ===== 受信フィールド:左ペイン =====
-    def _set_left_field(self, parent_frame):
-        # 左上ペイン(プロトコル、Multicast)
-        frame0 = ttk.Frame(parent_frame)
-        frame0.pack(anchor=tk.W)
-        self._set_proto_field(frame0)
-        # ※Multicast使わなさそうなのでコメントアウト
-        # self._set_multicast_field(frame0)
+class ProtocolField(ttk.LabelFrame):
+    """ 使用プロトコルフィールド """
 
-        # 左下ペイン(待ち受けアドレス、ポート設定)
-        frame1 = ttk.Frame(parent_frame)
-        frame1.pack(fill=tk.X)
-        self._set_addr_field(frame1)
+    def __init__(self, master):
+        ttk.LabelFrame.__init__(self, master, text="使用プロトコル")
 
-    # ===== 受信フィールド:右ペイン =====
-    def _set_right_field(self, parent_frame):
-        # 右上ペイン
-        frame0 = ttk.Frame(parent_frame)
-        frame0.pack()
-        self._set_monitor_field(frame0)
+        # プロトコルリスト
+        radio_item = {
+            'proto_tcp': {'text': "TCP", 'value': 0},
+            'proto_udp': {'text': "UDP", 'value': 1},
+        }
 
-        # 右下ペイン
-        frame1 = ttk.Frame(parent_frame)
-        frame1.pack(fill=tk.BOTH)
-        self._set_controller_field(frame1)
+        for key, val in radio_item.items():
+            item = ttk.Radiobutton(
+                self, text=val['text'], value=val['value'])
+            item.configure(variable=RxController.RecvParams().proto)
+            item.pack(side=tk.LEFT, padx=8)
+            rxWidgets[key] = item
 
-    # ===== 使用プロトコル =====
-    def _set_proto_field(self, parent_frame):
-        frame = ttk.LabelFrame(parent_frame, text="使用プロトコル")
-        frame.pack(side=tk.LEFT)
 
-        radio_tcp = ttk.Radiobutton(
-            frame, text="TCP", value=0, variable=self.rxParams.proto)
-        radio_udp = ttk.Radiobutton(
-            frame, text="UDP", value=1, variable=self.rxParams.proto)
+class AcceptAddressField(ttk.LabelFrame):
+    """ 受信ポート設定フィールド """
 
-        radio_tcp.pack(side=tk.LEFT)
-        radio_udp.pack(side=tk.LEFT)
+    def __init__(self, master):
+        ttk.LabelFrame.__init__(self, master, text="受信ポート設定")
 
-        self.rxWidgets["radio_tcp"] = radio_tcp
-        self.rxWidgets["radio_udp"] = radio_udp
-
-    # ===== Multicast(未使用) =====
-    def _set_multicast_field(self, parent_frame):
-        frame = ttk.LabelFrame(parent_frame, text="Multicast")
-        frame.pack(fill=tk.BOTH)
-
-        ttk.Checkbutton(frame, text='Use').pack(side=tk.LEFT)
-        ttk.Entry(frame, width=16).pack(side=tk.LEFT)
-
-    # ===== 受信ポート設定 =====
-    def _set_addr_field(self, parent_frame):
-        frame = ttk.LabelFrame(parent_frame, text="受信ポート設定")
-        frame.pack(fill=tk.X)
-
-        ttk.Label(frame, text="IPアドレス").pack(side=tk.LEFT)
-        address_list = (HachiUtil.LocalAddress())()
-        combo_host = ttk.Combobox(
-            frame, width=28, values=address_list, textvariable=self.rxParams.host)
-        self.rxParams.host.set(address_list[0])
+        # IPアドレス
+        ttk.Label(self, text="IPアドレス").pack(side=tk.LEFT)
+        address_list = HachiUtil.LocalAddress().get()
+        dstip = ttk.Combobox(self, width=28, values=address_list)
+        dstip.configure(textvariable=RxController.RecvParams().ip)
+        RxController.RecvParams().ip.set(address_list[0])
         # IPアドレスをコピーできるようにするため、ROにしない
         # combo_host.state(['readonly'])
-        combo_host.pack(side=tk.LEFT)
+        dstip.pack(side=tk.LEFT)
+        rxWidgets['dstip'] = dstip
 
-        entry_port = Common.LabelEntry(
-            frame, text="ポート", width=6, textvariable=self.rxParams.port)
-        entry_port.pack(side=tk.LEFT)
+        # ポート番号
+        dstport = Common.LabelEntry(self, text="ポート番号", width=20)
+        dstport.Entry.configure(
+            textvariable=RxController.RecvParams().port)
+        dstport.pack(anchor=tk.N)
+        rxWidgets['dstport'] = dstport.Entry
 
-        self.rxWidgets["combo_host"] = combo_host
-        self.rxWidgets["entry_port"] = entry_port
 
-    # ===== 受信モニター =====
-    def _set_monitor_field(self, parent_frame):
-        frame = ttk.LabelFrame(parent_frame, text="受信モニター")
-        frame.pack()
+class MonitorField(ttk.LabelFrame):
+    """ 送信モニターフィールド """
 
-        Common.LabelReadonlyEntry(
-            frame, text="受信数/秒", width=7, textvariable=self.rxParams.real_pps).pack(side=tk.LEFT)
-        Common.LabelReadonlyEntry(
-            frame, text="データ長(Byte)", width=6, textvariable=self.rxParams.real_datalen).pack(side=tk.LEFT)
-        Common.LabelReadonlyEntry(
-            frame, text="bps換算", width=9, textvariable=self.rxParams.real_bps).pack(side=tk.LEFT)
+    def __init__(self, master):
+        ttk.LabelFrame.__init__(self, master, text="受信モニター")
 
-    # ===== 受信ボタン =====
-    def _set_controller_field(self, parent_frame):
-        recvAction = RxController.RecvAction(self.rxParams, self.rxWidgets)
-        button = ttk.Button(
-            parent_frame, textvariable=self.rxParams.recv_btn_text, command=recvAction)
+        # 受信数/秒
+        mon_pps = Common.LabelReadonlyEntry(self, text="受信数/秒", width=7)
+        mon_pps.Entry.configure(textvariable=RxController.MonitorParams().pps)
+
+        # データ長(Byte)
+        mon_datalen = Common.LabelReadonlyEntry(
+            self, text="データ長(Byte)", width=6)
+        mon_datalen.Entry.configure(
+            textvariable=RxController.MonitorParams().datalen)
+
+        # bps換算
+        mon_bps = Common.LabelReadonlyEntry(self, text="bps換算", width=9)
+        mon_bps.Entry.configure(textvariable=RxController.MonitorParams().bps)
+
+        # 表示設定
+        mon_pps.grid(row=0, column=0)
+        mon_datalen.grid(row=0, column=1)
+        mon_bps.grid(row=0, column=2)
+
+
+class ControllerField(ttk.Frame):
+    """ コントローラフィールド """
+
+    def __init__(self, master):
+        ttk.Frame.__init__(self, master)
+
+        button = ttk.Button(self)
+        button.configure(textvariable=RxController.MonitorParams().recv_btn)
+        button.configure(command=RxController.RecvAction(widgets=rxWidgets))
         button.pack(side=tk.LEFT, ipady=5)
+
         # 必要なら復活させる
-        # ttk.Checkbutton(parent_frame, text='ログ').pack(side=tk.LEFT)
+        # ttk.Checkbutton(self, text='ログ').pack(side=tk.LEFT)
+
+# =================================
+# == 表示メイン処理
+# =================================
+
+
+def show(master):
+    SettingField(master).grid(sticky=tk.NW, row=0, column=0, rowspan=2)
+    MonitorField(master).grid(sticky=tk.NW, row=0, column=1)
+    ControllerField(master).grid(sticky=tk.NW, row=1, column=1)

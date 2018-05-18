@@ -11,8 +11,8 @@ from model import RecvThread
 
 
 class RecvUdpThread(RecvThread.RecvThread):
-    def __init__(self, host, port, share_obj):
-        super().__init__(host, port, share_obj)
+    def __init__(self, params, shareObj):
+        super().__init__(params, shareObj)
 
         self.sock = socket.socket(self.family, socket.SOCK_DGRAM)
         self.sock.bind(self.address)
@@ -30,5 +30,5 @@ class RecvUdpThread(RecvThread.RecvThread):
             except socket.error:
                 pass
             else:
-                self.share_obj.count += 1
-                self.share_obj.total += len(data[0])
+                self.shareObj.count += 1
+                self.shareObj.total += len(data[0])

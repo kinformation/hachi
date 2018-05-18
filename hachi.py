@@ -27,7 +27,7 @@ class App():
         MenuBar.MenuBar(menubar)
 
         # ===== メインフレーム =====
-        # RxField.RxField(master)
+        RxField.show(master)
         TxField.show(master)
         LogField.show(master)
 

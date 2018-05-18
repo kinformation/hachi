@@ -23,7 +23,7 @@ class SettingField(ttk.LabelFrame):
         ttk.LabelFrame.__init__(self, master, text="送信設定")
 
         # プロトコル設定(1列目)
-        ProtocolField(self).pack()
+        ProtocolField(self).pack(anchor=tk.W)
         # 送信先設定(2列目)
         DstAddressField(self).pack()
         # 送信元設定(3列目)
@@ -167,7 +167,7 @@ class ControllerField(ttk.Frame):
         ttk.Frame.__init__(self, master)
 
         # 送信ボタン
-        button = ttk.Button(self, text="送信開始")
+        button = ttk.Button(self)
         button.configure(textvariable=TxController.MonitorParams().send_btn)
         button.configure(command=TxController.SendAction(widgets=txWidgets))
         button.pack(side=tk.LEFT, ipady=5)
@@ -178,6 +178,6 @@ class ControllerField(ttk.Frame):
 
 
 def show(master):
-    SettingField(master).grid(row=0, column=0, rowspan=2)
-    MonitorField(master).grid(row=0, column=1)
-    ControllerField(master).grid(row=1, column=1)
+    SettingField(master).grid(sticky=tk.NW, row=3, column=0, rowspan=2)
+    MonitorField(master).grid(sticky=tk.NW, row=3, column=1)
+    ControllerField(master).grid(sticky=tk.NW, row=4, column=1)

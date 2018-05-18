@@ -11,8 +11,8 @@ from model import RecvThread
 
 
 class RecvTcpThread(RecvThread.RecvThread):
-    def __init__(self, host, port, share_obj):
-        super().__init__(host, port, share_obj)
+    def __init__(self, params, shareObj):
+        super().__init__(params, shareObj)
 
         self.sock = socket.socket(self.family, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -30,5 +30,5 @@ class RecvTcpThread(RecvThread.RecvThread):
             if len(rcvmsg) <= 0:
                 clientsock, _ = self.sock.accept()
                 pass
-            self.share_obj.count += 1
-            self.share_obj.total += len(rcvmsg)
+            self.shareObj.count += 1
+            self.shareObj.total += len(rcvmsg)

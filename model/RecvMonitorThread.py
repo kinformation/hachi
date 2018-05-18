@@ -5,11 +5,11 @@ import time
 
 
 class RecvMonitorThread(threading.Thread):
-    def __init__(self, share_obj, datalen, pps):
+    def __init__(self, params, shareObj):
         super(RecvMonitorThread, self).__init__()
-        self.share_obj = share_obj
-        self.datalen = datalen
-        self.pps = pps
+        self.shareObj = shareObj
+        self.datalen = params.datalen
+        self.pps = params.pps
         self.stop_flg = False
 
     def run(self):
@@ -24,10 +24,10 @@ class RecvMonitorThread(threading.Thread):
         self.stop_flg = True
 
     def _update(self):
-        tmp_count = self.share_obj.count
-        tmp_total = self.share_obj.total
-        self.share_obj.count = 0
-        self.share_obj.total = 0
+        tmp_count = self.shareObj.count
+        tmp_total = self.shareObj.total
+        self.shareObj.count = 0
+        self.shareObj.total = 0
         self.pps.set(tmp_count)
         if tmp_count > 0 and tmp_total > 0:
             self.datalen.set(int(tmp_total/tmp_count))
@@ -36,4 +36,4 @@ class RecvMonitorThread(threading.Thread):
 
     def _clear(self):
         self.pps.set(0)
-        self.share_obj.count = 0
+        self.shareObj.count = 0
