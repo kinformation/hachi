@@ -5,10 +5,10 @@ import time
 
 
 class SendMonitorThread(threading.Thread):
-    def __init__(self, sendcount, pps):
+    def __init__(self, sendObj, params):
         super(SendMonitorThread, self).__init__()
-        self.sendcount = sendcount
-        self.pps = pps
+        self.sendObj = sendObj
+        self.pps = params.pps
         self.stop_flg = False
         self.prev = 0
         self.current = 0
@@ -28,12 +28,12 @@ class SendMonitorThread(threading.Thread):
 
     def _clear(self):
         self.pps.set(0)
-        self.sendcount.num = 0
+        self.sendObj.count = 0
 
     def _update(self):
         # 頻繁にカウンタリセットすると送信性能落ちるため
         # 差分を拾っていく
-        self.current = self.sendcount.num
+        self.current = self.sendObj.count
         self.pps.set(self.current - self.prev)
         self.prev = self.current
 
@@ -45,4 +45,4 @@ class SendMonitorThread(threading.Thread):
     def _reset(self):
         self.current = 0
         self.prev = 0
-        self.sendcount.num = 0
+        self.sendObj.count = 0

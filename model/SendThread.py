@@ -12,7 +12,7 @@ from model import HachiUtil
 
 
 class SendThread(threading.Thread):
-    def __init__(self, params, counter):
+    def __init__(self, params, sendObj, srcport):
         super(SendThread, self).__init__()
         self.unlimited = params.unlimited.get()
         self.freq = 1 / int(params.pps.get())
@@ -20,9 +20,9 @@ class SendThread(threading.Thread):
         self.address_list = params.dstaddr.address_list()
 
         # srcportはIntVar()を渡す
-        # self.srcport_obj = params.srcport
+        self.srcport = srcport
 
-        self.counter = counter
+        self.sendObj = sendObj
         self.stop_flg = False
 
         # IPv4とIPv6でソケットファミリー分かれる

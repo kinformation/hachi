@@ -13,8 +13,8 @@ from model import SendThread
 
 
 class SendUdpThread(SendThread.SendThread):
-    def __init__(self, params, counter):
-        super().__init__(params, counter)
+    def __init__(self, params, sendObj, srcport):
+        super().__init__(params, sendObj, srcport)
 
         # UDP送信用ソケット生成
         self.sock = socket.socket(self.family, socket.SOCK_DGRAM)
@@ -22,7 +22,7 @@ class SendUdpThread(SendThread.SendThread):
     def run(self):
         # 送信元ポート特定のため一発投げておく
         self.sock.sendto(self.payload, self.address_list[0])
-        # self.srcport_obj.set(self.sock.getsockname()[1])
+        self.srcport.set(self.sock.getsockname()[1])
 
         # with => ブロックを抜けるときに必ずsockのclose()が呼ばれる
         with closing(self.sock):
@@ -36,14 +36,11 @@ class SendUdpThread(SendThread.SendThread):
         st = 0
         # whileはforより圧倒的にループが遅い
         for address in cycle(self.address_list):
-
-            # stop_flg == True なら停止
-            if self.stop_flg == True:
-                break
-
             st = time.perf_counter()
             self.sock.sendto(self.payload, address)
-            self.counter.num += 1
+            self.sendObj.count += 1
+            if self.stop_flg:
+                break
 
             # time.sleep(self.freq)は精度が低い
             # これで誤差はだいたい+1.5μ秒
@@ -53,6 +50,6 @@ class SendUdpThread(SendThread.SendThread):
     def _send_u(self):
         for address in cycle(self.address_list):
             self.sock.sendto(self.payload, address)
-            self.counter.num += 1
+            self.sendObj.count += 1
             if self.stop_flg:
                 break

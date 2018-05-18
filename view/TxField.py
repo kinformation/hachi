@@ -27,7 +27,7 @@ class SettingField(ttk.LabelFrame):
         # 送信先設定(2列目)
         DstAddressField(self).pack()
         # 送信元設定(3列目)
-        SrcAddressField(self).pack()
+        # SrcAddressField(self).pack()
         # 送信パラメータ設定(4列目)
         SendParamField(self).pack()
 

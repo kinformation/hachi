@@ -94,11 +94,11 @@ class MonitorParams(object):
         return cls._instance
 
 
-class SendcountShareObject(object):
-    """ パケット送信数をスレッド間で共有するためのクラス """
+class SendShareObject(object):
+    """ スレッド間でデータを共有するためのクラス """
 
     def __init__(self):
-        self.num = 0
+        self.count = 0
 
 
 class SendAction:
@@ -114,7 +114,7 @@ class SendAction:
             cls.monitorParams = MonitorParams()
 
             cls.stat = 0
-            cls.sendcount = SendcountShareObject()
+            cls.sendObj = SendShareObject()
 
             # スレッド変数
             cls.th_send = None
@@ -134,8 +134,8 @@ class SendAction:
         else:
             self._send_stop()
 
-#     def send_stop(self):
-#         self._send_stop()
+    def send_stop(self):
+        self._send_stop()
 
     def _send_start(self):
         # ログ出力インスタンス
@@ -173,7 +173,7 @@ class SendAction:
         """ TCPパケット送信スレッド """
 
         self.th_send = SendTcpThread.SendTcpThread(
-            SendParams(), self.sendcount)
+            SendParams(), self.sendObj, MonitorParams().srcport)
         self.th_send.setDaemon(True)
         self.th_send.start()
 
@@ -181,7 +181,7 @@ class SendAction:
         """ UDPパケット送信スレッド """
 
         self.th_send = SendUdpThread.SendUdpThread(
-            SendParams(), self.sendcount)
+            SendParams(), self.sendObj, MonitorParams().srcport)
         self.th_send.setDaemon(True)
         self.th_send.start()
 
@@ -189,7 +189,7 @@ class SendAction:
         """ パケット送信監視スレッド """
 
         self.th_monitor = SendMonitorThread.SendMonitorThread(
-            self.sendcount, MonitorParams.pps)
+            self.sendObj, MonitorParams())
         self.th_monitor.setDaemon(True)
         self.th_monitor.start()
 
@@ -218,17 +218,6 @@ class SendAction:
         self.stat = 0
 
 
-# def tcp_exception(exc_obj):
-#     logger = LogController.LogController()
-#     if len(exc_obj.args) == 1:
-#         msg = "コネクションの確立に失敗しました。"
-#     else:
-#         msg = exc_obj.args[1]
-#     logger.insert(msg)
-#     messagebox.showwarning(title="warning", message=msg)
-#     SendAction().send_stop()
-
-
 class CheckUnlimited:
     """ 「最高速」チェック時の動作設定 """
 
@@ -243,10 +232,26 @@ class CheckUnlimited:
         else:
             self.pps_obj.state(['!disabled'])
 
+# =================================
+# == 公開関数
+# =================================
+
+
+def tcp_exception(exc_obj):
+    logger = LogController.LogController()
+    if len(exc_obj.args) == 1:
+        msg = "コネクションの確立に失敗しました。"
+    else:
+        msg = exc_obj.args[1]
+    logger.insert(msg)
+    messagebox.showwarning(title="warning", message=msg)
+    SendAction().send_stop()
 
 # =================================
 # == ローカル関数
 # =================================
+
+
 def _param_check():
     """ 送信パラメータチェック """
 
