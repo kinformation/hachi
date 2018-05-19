@@ -36,14 +36,15 @@ class AddrVar:
         self.port = tk.StringVar(value=port)
 
     def address_list(self):
-        return list(itertools.product(self.ip_list(), self.port_list()))
+        # portは事前にIntチェックをしておくこと
+        port_list = map(int, self.port_list())
+        return list(itertools.product(self.ip_list(), port_list))
 
     def ip_list(self):
         return self._purse(self.ip.get())
 
     def port_list(self):
-        # リスト全要素をint型に変換して返す
-        return list(map(int, self._purse(self.port.get())))
+        return self._purse(self.port.get())
 
     def _purse(self, str):
         # "1,2" => ['1', '2']
@@ -62,8 +63,8 @@ class SendParams(object):
             cls._instance = object.__new__(cls)
 
             cls.proto = tk.IntVar(value=DEF_PROTO)
-            cls.datalen = tk.IntVar(value=DEF_DATALEN)
-            cls.pps = tk.IntVar(value=DEF_PPS)
+            cls.datalen = tk.StringVar(value=DEF_DATALEN)
+            cls.pps = tk.StringVar(value=DEF_PPS)
             cls.unlimited = tk.BooleanVar(value=False)
             cls.bps = tk.StringVar()
             cls.dstaddr = AddrVar(ip=DEF_DST_IP, port=DEF_DST_PROT)
@@ -232,6 +233,7 @@ class CheckUnlimited:
         else:
             self.pps_obj.state(['!disabled'])
 
+
 # =================================
 # == 公開関数
 # =================================
@@ -270,15 +272,16 @@ def _param_check():
 
     # ポート番号 0～65535
     for port in dstaddr.port_list():
-        if not (0 <= port <= 65535):
+        if not (port.isdigit() and (0 <= int(port) <= 65535)):
             msg += "・ポート番号は 0～65535 の範囲で指定してください。\n"
+            break
 
     # データ長
-    if not (MIN_DATALEN <= datalen <= MAX_DATALEN):
+    if not (datalen.isdigit() and (MIN_DATALEN <= int(datalen) <= MAX_DATALEN)):
         msg += "・データ長(byte)は {}～{} の範囲で指定してください。\n".format(MIN_DATALEN, MAX_DATALEN)
 
     # 送信パケット数/秒
-    if not (MIN_DATALEN <= pps <= MAX_PPS):
+    if not (pps.isdigit() and (MIN_DATALEN <= int(pps) <= MAX_PPS)):
         msg += "・送信パケット数/秒は {}～{} の範囲で指定してください。\n".format(MIN_DATALEN, MAX_PPS)
 
     return msg

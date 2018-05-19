@@ -23,13 +23,15 @@ class SettingField(ttk.LabelFrame):
         ttk.LabelFrame.__init__(self, master, text="送信設定")
 
         # プロトコル設定(1列目)
-        ProtocolField(self).pack(anchor=tk.W)
-        # 送信先設定(2列目)
-        DstAddressField(self).pack()
+        ProtocolField(self).grid(row=0, column=0, columnspan=3, sticky=tk.W)
         # 送信元設定(3列目)
-        # SrcAddressField(self).pack()
+        SrcAddressField(self).grid(row=1, column=0)
+        # 送信元設定(3列目)
+        ttk.Label(self, text="⇒").grid(row=1, column=1)
+        # 送信先設定(2列目)
+        DstAddressField(self).grid(row=1, column=2)
         # 送信パラメータ設定(4列目)
-        SendParamField(self).pack()
+        SendParamField(self).grid(row=2, column=0, columnspan=3)
 
 
 class ProtocolField(ttk.LabelFrame):
@@ -61,17 +63,17 @@ class DstAddressField(ttk.LabelFrame):
         ttk.LabelFrame.__init__(self, master, text="送信先設定")
 
         # IPアドレス
-        dstip = Common.LabelEntry(self, text="IPアドレス", width=30)
+        dstip = Common.LabelEntry(self, text="IPアドレス", width=23)
         dstip.Entry.configure(
             textvariable=TxController.SendParams().dstaddr.ip)
-        dstip.pack(side=tk.LEFT, anchor=tk.N)
+        dstip.pack(anchor=tk.E)
         txWidgets['dstip'] = dstip.Entry
 
         # ポート番号
-        dstport = Common.LabelEntry(self, text="ポート番号", width=20)
+        dstport = Common.LabelEntry(self, text="ポート番号", width=23)
         dstport.Entry.configure(
             textvariable=TxController.SendParams().dstaddr.port)
-        dstport.pack(anchor=tk.N)
+        dstport.pack(anchor=tk.E)
         txWidgets['dstport'] = dstport.Entry
 
 
@@ -82,17 +84,17 @@ class SrcAddressField(ttk.LabelFrame):
         ttk.LabelFrame.__init__(self, master, text="送信元設定")
 
         # IPアドレス
-        srcip = Common.LabelEntry(self, text="IPアドレス", width=30)
+        srcip = Common.LabelEntry(self, text="IPアドレス", width=23)
         srcip.Entry.configure(
             textvariable=TxController.SendParams().srcaddr.port)
-        srcip.pack(side=tk.LEFT, anchor=tk.N)
+        srcip.pack(anchor=tk.E)
         txWidgets['srcip'] = srcip.Entry
 
         # ポート番号
-        srcport = Common.LabelEntry(self, text="ポート番号", width=20)
+        srcport = Common.LabelEntry(self, text="ポート番号", width=23)
         srcport.Entry.configure(
             textvariable=TxController.SendParams().srcaddr.port)
-        srcport.pack(anchor=tk.N)
+        srcport.pack(anchor=tk.E)
         txWidgets['srcport'] = srcport.Entry
 
 
@@ -104,20 +106,20 @@ class SendParamField(ttk.Frame):
 
         # データ長
         param_datalen = Common.LabelEntry(self, text="データ長", width=6)
-        param_datalen.pack(side=tk.LEFT)
+        param_datalen.pack(side=tk.LEFT, padx=5)
         param_datalen.Entry.configure(
             textvariable=TxController.SendParams().datalen)
         txWidgets['param_datalen'] = param_datalen.Entry
 
         # 送信パケット数/秒
         param_pps = Common.LabelEntry(self, text="送信パケット数/秒", width=6)
-        param_pps.pack(side=tk.LEFT)
+        param_pps.pack(side=tk.LEFT, padx=5)
         param_pps.Entry.configure(textvariable=TxController.SendParams().pps)
         txWidgets['param_pps'] = param_pps.Entry
 
         # 最高速
         param_unlimited = ttk.Checkbutton(self, text='最高速')
-        param_unlimited.pack(side=tk.LEFT)
+        param_unlimited.pack(side=tk.LEFT, padx=5)
         param_unlimited.configure(command=TxController.CheckUnlimited(
             TxController.SendParams().unlimited, txWidgets['param_pps']))
         param_unlimited.configure(variable=TxController.SendParams().unlimited)
