@@ -22,22 +22,26 @@ class Packet:
         self.data = ""
 
     def _get_addr(self, name):
-        return socket.inet_aton(socket.gethostbyname(name))
+        # return socket.inet_aton(socket.gethostbyname(name))
+        return socket.inet_aton(name)
 
     def _get_checksum(self, data):
         """ チェックサムを生成 """
 
         result = 0
-        # 2byte毎に１の補数変換して足し合わせる
+        # 1. 2オクテットごとに足し合わせる(奇数なら\x00パディング)
         for i in range(0, len(data), 2):
             try:
-                result += 0xffff - (data[i] << 8 | data[i+1])
-            except IndexError:  # if len(data) % 2 != 0
-                result += 0xffff - (data[i] << 8)
+                result += data[i] << 8 | data[i+1]
+            except IndexError:  # 奇数オクテットの場合
+                result += data[i] << 8
 
-        # 下位16bitを１の補数変換
-        result = (0xffff & result)
-        print(hex(result))
+        # 2. LSB(下位16bit)とMSB(上位16bit:桁あふれ分)を加算する
+        while result > 0xffff:
+            result = (result & 0xffff)+(result >> 16)
+
+        # 3. 計算結果の１の補数を返す
+        result = 0xffff - result
 
         return result
 
@@ -67,7 +71,6 @@ class Packet:
 def UDPPacket(data, dst_addr, src_addr, **kwargs):
     """
     UDPパケットを生成する
-    送信元ポート(16)+宛先ポート(16)+データ長(16)+チェックサム(16)+データ(任意)
     """
 
     p = Packet()
@@ -83,15 +86,33 @@ def UDPPacket(data, dst_addr, src_addr, **kwargs):
     p.set_dst(dst_addr[0])
 
     # UDPヘッダ
+    #  0      7 8     15 16    23 24    31
+    # +--------+--------+--------+--------+
+    # |   source port   | destination port|
+    # +--------+--------+--------+--------+
+    # |     length      |    checksum     |
+    # +--------+--------+--------+--------+
+    # |               data
+    # +---------------- ...
     udp_header = pack(">HHH", src_addr[1], dst_addr[1], len(data)+8)
 
     # チェックサム用疑似ヘッダ(IPv4)
-    pseudo_header = p.src + p.dst + b"\x00" + \
-        p.protocol + pack(">H", 20+len(data))
+    #  0      7 8     15 16    23 24    31
+    # +--------+--------+--------+--------+
+    # |          source address           |
+    # +--------+--------+--------+--------+
+    # |        destination address        |
+    # +--------+--------+--------+--------+
+    # |  zero  |protocol|   UDP length    |
+    # +--------+--------+--------+--------+
+    # pseudo_len = (1).to_bytes(2, 'big')
+    pseudo_len = (8 + len(data)).to_bytes(2, 'big')
+    pseudo_header = p.src + p.dst + b"\x00" + p.protocol + pseudo_len
     checksum_src = pseudo_header+udp_header+data.encode('utf-8')
 
     # チェックサム計算
     checksum = p._get_checksum(checksum_src)
+    # udp_header += checksum.to_bytes(2, 'big')
     udp_header += pack(">H", checksum)
 
     p.data = udp_header+data.encode('utf-8')
@@ -104,6 +125,6 @@ if __name__ == "__main__":
     s.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
 
     # dst_addr, src_addr = ("127.0.0.1", 1234), ("127.0.0.1", 11112)
-    dst_addr, src_addr = ("169.254.1.10", 12000), ("169.254.1.100", 12000)
-    p = UDPPacket("testa", dst_addr, src_addr)
+    dst_addr, src_addr = ("192.168.2.202", 12000), ("192.168.2.101", 52321)
+    p = UDPPacket("abbaaaaaa", dst_addr, src_addr)
     s.sendto(p, dst_addr)
