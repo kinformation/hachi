@@ -6,7 +6,8 @@ UDPでパケットを投げるスレッド
 
 import socket
 import time
-from itertools import cycle
+from itertools import cycle, repeat
+import itertools
 from contextlib import closing
 
 from model import SendThread
@@ -22,7 +23,7 @@ class SendUdpThread(SendThread.SendThread):
             self.family, socket.SOCK_RAW, socket.IPPROTO_UDP)
         self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
 
-        src_addr = ("169.254.1.100", 52321)
+        src_addr = ("169.254.1.101", 52321)
         self.packet_list = [UDPPacket(self.data, dst, src_addr)
                             for dst in self.address_list]
 
@@ -40,7 +41,6 @@ class SendUdpThread(SendThread.SendThread):
                 self._send()
 
     def _send(self):
-        st = 0
         # whileはforより圧倒的にループが遅い
         for (address, packet) in cycle(zip(self.address_list, self.packet_list)):
             st = time.perf_counter()

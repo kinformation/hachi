@@ -64,6 +64,7 @@ class LocalAddress:
             ifaddr = netifaces.ifaddresses(ifname)
             # IPv4
             if netifaces.AF_INET in ifaddr:
+                for addr4 in
                 addr4 = ifaddr[netifaces.AF_INET][0]['addr']
                 if self._check_addr(addr4) == True:
                     self.list.append(addr4)
