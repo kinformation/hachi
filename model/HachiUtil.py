@@ -64,14 +64,14 @@ class LocalAddress:
             ifaddr = netifaces.ifaddresses(ifname)
             # IPv4
             if netifaces.AF_INET in ifaddr:
-                addr4 = ifaddr[netifaces.AF_INET][0]['addr']
-                if self._check_addr(addr4) == True:
-                    self.list.append(addr4)
+                for ipv4 in ifaddr[netifaces.AF_INET]:
+                    if self._check_addr(ipv4['addr']) == True:
+                        self.list.append(ipv4['addr'])
             # IPv6
             if netifaces.AF_INET6 in ifaddr:
-                addr6 = ifaddr[netifaces.AF_INET6][0]['addr']
-                if self._check_addr(addr6) == True:
-                    self.list.append(addr6)
+                for ipv6 in ifaddr[netifaces.AF_INET6]:
+                    if self._check_addr(ipv6['addr']) == True:
+                        self.list.append(ipv6['addr'])
 
     def get(self):
         return self.list
