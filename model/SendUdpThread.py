@@ -22,13 +22,13 @@ class SendUdpThread(SendThread.SendThread):
             self.family, socket.SOCK_RAW, socket.IPPROTO_UDP)
         self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
 
-        # dst_addr, src_addr = ("127.0.0.1", 1234), ("127.0.0.1", 11112)
-        dst_addr, src_addr = self.address_list[0], ("169.254.1.100", 52321)
-        self.payload = UDPPacket("abbaaaaaa", dst_addr, src_addr)
+        src_addr = ("169.254.1.100", 52321)
+        self.packet_list = [UDPPacket(self.data, dst, src_addr)
+                            for dst in self.address_list]
 
     def run(self):
         # 送信元ポート特定のため一発投げておく
-        self.sock.sendto(self.payload, self.address_list[0])
+        self.sock.sendto(self.packet_list[0], self.address_list[0])
         self.srcport.set(self.sock.getsockname()[1])
 
         # with => ブロックを抜けるときに必ずsockのclose()が呼ばれる
@@ -42,9 +42,9 @@ class SendUdpThread(SendThread.SendThread):
     def _send(self):
         st = 0
         # whileはforより圧倒的にループが遅い
-        for address in cycle(self.address_list):
+        for (address, packet) in cycle(zip(self.address_list, self.packet_list)):
             st = time.perf_counter()
-            self.sock.sendto(self.payload, address)
+            self.sock.sendto(packet, address)
             self.sendObj.count += 1
             if self.stop_flg:
                 break
@@ -55,8 +55,8 @@ class SendUdpThread(SendThread.SendThread):
                 pass
 
     def _send_u(self):
-        for address in cycle(self.address_list):
-            self.sock.sendto(self.payload, address)
+        for (address, packet) in cycle(zip(self.address_list, self.packet_list)):
+            self.sock.sendto(packet, address)
             self.sendObj.count += 1
             if self.stop_flg:
                 break
@@ -64,10 +64,8 @@ class SendUdpThread(SendThread.SendThread):
 # --------------------------------------------------
 
 
-# -*- coding: utf-8 -*-
 import socket
 from struct import pack
-import random
 
 
 class Packet:
@@ -136,6 +134,8 @@ class Packet:
 def UDPPacket(data, dst_addr, src_addr, **kwargs):
     """
     UDPパケットを生成する
+    data -> binary
+    dst_addr,src_addr -> (ip, port)
     """
 
     p = Packet()
@@ -170,26 +170,13 @@ def UDPPacket(data, dst_addr, src_addr, **kwargs):
     # +--------+--------+--------+--------+
     # |  zero  |protocol|   UDP length    |
     # +--------+--------+--------+--------+
-    # pseudo_len = (1).to_bytes(2, 'big')
     pseudo_len = (8 + len(data)).to_bytes(2, 'big')
     pseudo_header = p.src + p.dst + b"\x00" + p.protocol + pseudo_len
-    checksum_src = pseudo_header+udp_header+data.encode('utf-8')
+    checksum_src = pseudo_header+udp_header+data
 
     # チェックサム計算
     checksum = p._get_checksum(checksum_src)
-    # udp_header += checksum.to_bytes(2, 'big')
     udp_header += pack(">H", checksum)
 
-    p.data = udp_header+data.encode('utf-8')
+    p.data = udp_header+data
     return p.build()
-
-
-# if __name__ == "__main__":
-#     s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_UDP)
-#     # dont include ip header
-#     s.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
-
-#     # dst_addr, src_addr = ("127.0.0.1", 1234), ("127.0.0.1", 11112)
-#     dst_addr, src_addr = ("192.168.2.202", 12000), ("192.168.2.101", 52321)
-#     p = UDPPacket("abbaaaaaa", dst_addr, src_addr)
-#     s.sendto(p, dst_addr)

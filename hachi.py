@@ -54,8 +54,8 @@ if __name__ == '__main__':
         master.mainloop()
     else:
         # Re-run the program with admin rights
-        # ctypes.windll.shell32.ShellExecuteW(
-        #     None, "runas", sys.executable, __file__, None, 1)
-        # for pyinstaller
         ctypes.windll.shell32.ShellExecuteW(
-            None, "runas", sys.executable, "", None, 1)
+            None, "runas", sys.executable, __file__, None, 1)
+        # # for pyinstaller
+        # ctypes.windll.shell32.ShellExecuteW(
+        #     None, "runas", sys.executable, "", None, 1)
