@@ -18,6 +18,7 @@ class SendThread(threading.Thread):
         self.freq = 1 / int(params.pps.get())
         self.data = HachiUtil.ramdom_binary(int(params.datalen.get()))
         self.address_list = params.dstaddr.address_list()
+        self.advanced = True
 
         # srcportはIntVar()を渡す
         self.srcport = srcport

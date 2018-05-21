@@ -53,9 +53,11 @@ if __name__ == '__main__':
         App(master)
         master.mainloop()
     else:
-        # Re-run the program with admin rights
+        print(sys.executable)
+        print(__file__)
         ctypes.windll.shell32.ShellExecuteW(
-            None, "runas", sys.executable, __file__, None, 1)
-        # # for pyinstaller
-        # ctypes.windll.shell32.ShellExecuteW(
-        #     None, "runas", sys.executable, "", None, 1)
+            None, "runas", sys.executable, __file__, None,  0)
+
+    # master = tk.Tk()
+    # App(master)
+    # master.mainloop()
