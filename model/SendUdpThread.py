@@ -6,7 +6,7 @@ UDPでパケットを投げるスレッド
 
 import socket
 import time
-from itertools import cycle
+from itertools import cycle, product
 from contextlib import closing
 from struct import pack
 
@@ -18,21 +18,21 @@ class SendUdpThread(SendThread.SendThread):
         super().__init__(params, sendObj, srcport)
 
         # UDP送信用ソケット生成
-
+        self.senddata = []  # (送信データ, 宛先アドレス)
         if params.advanced == False:  # 通常
             self.sock = socket.socket(self.family, socket.SOCK_DGRAM)
             # 宛先リスト分作成
-            self.senddata_list = [self.data for i in self.dstaddr_list]
+            self.senddata = [(self.data, dst) for dst in self.dstaddr_list]
         else:  # 管理者権限
             self.sock = socket.socket(
                 self.family, socket.SOCK_RAW, socket.IPPROTO_UDP)
             self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
-            self.senddata_list = [
-                UDPPacket(self.data, dst, self.srcaddr_list[0]) for dst in self.dstaddr_list]
+            for dst, src in product(self.dstaddr_list, self.srcaddr_list):
+                self.senddata.append((UDPPacket(self.data, dst, src), dst))
 
     def run(self):
         # 送信元ポート特定のため一発投げておく
-        self.sock.sendto(self.senddata_list[0], self.dstaddr_list[0])
+        self.sock.sendto(self.senddata[0][0], self.senddata[0][1])
         self.srcport.set(self.sock.getsockname()[1])
 
         # with => ブロックを抜けるときに必ずsockのclose()が呼ばれる
@@ -45,7 +45,7 @@ class SendUdpThread(SendThread.SendThread):
 
     def _send(self):
         # whileはforより圧倒的にループが遅い
-        for (address, packet) in cycle(zip(self.dstaddr_list, self.senddata_list)):
+        for (packet, address) in cycle(self.senddata):
             st = time.perf_counter()
             self.sock.sendto(packet, address)
             self.sendObj.count += 1
@@ -58,7 +58,7 @@ class SendUdpThread(SendThread.SendThread):
                 pass
 
     def _send_u(self):
-        for (address, packet) in cycle(zip(self.dstaddr_list, self.senddata_list)):
+        for (packet, address) in cycle(self.senddata):
             self.sock.sendto(packet, address)
             self.sendObj.count += 1
             if self.stop_flg:

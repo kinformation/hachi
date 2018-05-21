@@ -71,7 +71,7 @@ class SendParams(object):
             cls.bps = tk.StringVar()
             cls.dstaddr = AddrVar(ip=DEF_DST_IP, port=DEF_DST_PROT)
             cls.srcaddr = AddrVar(port=DEF_SRC_PROT)
-            cls.advanced = False
+            cls.advanced = HachiUtil.is_admin()
 
         return cls._instance
 
