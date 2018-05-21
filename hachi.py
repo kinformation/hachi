@@ -37,7 +37,25 @@ class App():
         return os.path.join(relative)
 
 
+import ctypes
+
+
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
+
 if __name__ == '__main__':
-    master = tk.Tk()
-    App(master)
-    master.mainloop()
+    if is_admin():
+        master = tk.Tk()
+        App(master)
+        master.mainloop()
+    else:
+        # Re-run the program with admin rights
+        # ctypes.windll.shell32.ShellExecuteW(
+        #     None, "runas", sys.executable, __file__, None, 1)
+        # for pyinstaller
+        ctypes.windll.shell32.ShellExecuteW(
+            None, "runas", sys.executable, "", None, 1)
