@@ -3,6 +3,7 @@
 import tkinter as tk
 from tkinter import ttk
 
+from model import HachiUtil
 from view import Common
 from controller import TxController
 
@@ -24,13 +25,13 @@ class SettingField(ttk.LabelFrame):
 
         # プロトコル設定(1列目)
         ProtocolField(self).grid(row=0, column=0, columnspan=3, sticky=tk.W)
-        # 送信元設定(3列目)
-        SrcAddressField(self).grid(row=1, column=0)
-        # 送信元設定(3列目)
+        # 送信元設定(2列目-1)
+        SrcAddressField(self).grid(row=1, column=0, sticky=tk.N)
+        # "⇒"(2列目-2)
         ttk.Label(self, text="⇒").grid(row=1, column=1)
-        # 送信先設定(2列目)
-        DstAddressField(self).grid(row=1, column=2)
-        # 送信パラメータ設定(4列目)
+        # 送信先設定(2列目-3)
+        DstAddressField(self).grid(row=1, column=2, sticky=tk.N)
+        # 送信パラメータ設定(3列目)
         SendParamField(self).grid(row=2, column=0, columnspan=3)
 
 
@@ -84,11 +85,17 @@ class SrcAddressField(ttk.LabelFrame):
         ttk.LabelFrame.__init__(self, master, text="送信元設定")
 
         # IPアドレス
-        srcip = Common.LabelEntry(self, text="IPアドレス", width=23)
-        srcip.Entry.configure(
-            textvariable=TxController.SendParams().srcaddr.port)
+        ipframe = ttk.Frame(self)
+        ipframe.pack(anchor=tk.E)
+        ttk.Label(ipframe, text="IPアドレス").pack(side=tk.LEFT)
+        address_list = HachiUtil.LocalAddress().get()
+        srcip = ttk.Combobox(ipframe, width=21, values=address_list)
+        srcip.configure(textvariable=TxController.SendParams().srcaddr.ip)
+        TxController.SendParams().srcaddr.ip.set(address_list[0])
+        # IPアドレスをコピーできるようにするため、ROにしない
+        # srcip.state(['readonly'])
         srcip.pack(anchor=tk.E)
-        txWidgets['srcip'] = srcip.Entry
+        txWidgets['srcip'] = srcip
 
         # ポート番号
         srcport = Common.LabelEntry(self, text="ポート番号", width=23)
@@ -96,6 +103,9 @@ class SrcAddressField(ttk.LabelFrame):
             textvariable=TxController.SendParams().srcaddr.port)
         srcport.pack(anchor=tk.E)
         txWidgets['srcport'] = srcport.Entry
+
+        # 注意書き
+        ttk.Label(self, text="※ 管理者として実行の場合のみ有効").pack(anchor=tk.E)
 
 
 class SendParamField(ttk.Frame):
@@ -183,3 +193,6 @@ def show(master):
     SettingField(master).grid(sticky=tk.NW, row=3, column=0, rowspan=2)
     MonitorField(master).grid(sticky=tk.NW, row=3, column=1)
     ControllerField(master).grid(sticky=tk.NW, row=4, column=1)
+
+    # 管理者権限モード表示切替
+    TxController.advanced_view(txWidgets)

@@ -18,21 +18,21 @@ class SendUdpThread(SendThread.SendThread):
         super().__init__(params, sendObj, srcport)
 
         # UDP送信用ソケット生成
-        if self.advanced == False:  # 通常設定
+
+        if params.advanced == False:  # 通常
             self.sock = socket.socket(self.family, socket.SOCK_DGRAM)
             # 宛先リスト分作成
-            self.senddata_list = [self.data for i in self.address_list]
-        else:  # 高度な設定(管理者権限が必要)
+            self.senddata_list = [self.data for i in self.dstaddr_list]
+        else:  # 管理者権限
             self.sock = socket.socket(
                 self.family, socket.SOCK_RAW, socket.IPPROTO_UDP)
             self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
-            src_addr = ("169.254.1.101", 52321)
-            self.senddata_list = [UDPPacket(self.data, dst, src_addr)
-                                  for dst in self.address_list]
+            self.senddata_list = [
+                UDPPacket(self.data, dst, self.srcaddr_list[0]) for dst in self.dstaddr_list]
 
     def run(self):
         # 送信元ポート特定のため一発投げておく
-        self.sock.sendto(self.senddata_list[0], self.address_list[0])
+        self.sock.sendto(self.senddata_list[0], self.dstaddr_list[0])
         self.srcport.set(self.sock.getsockname()[1])
 
         # with => ブロックを抜けるときに必ずsockのclose()が呼ばれる
@@ -45,7 +45,7 @@ class SendUdpThread(SendThread.SendThread):
 
     def _send(self):
         # whileはforより圧倒的にループが遅い
-        for (address, packet) in cycle(zip(self.address_list, self.senddata_list)):
+        for (address, packet) in cycle(zip(self.dstaddr_list, self.senddata_list)):
             st = time.perf_counter()
             self.sock.sendto(packet, address)
             self.sendObj.count += 1
@@ -58,7 +58,7 @@ class SendUdpThread(SendThread.SendThread):
                 pass
 
     def _send_u(self):
-        for (address, packet) in cycle(zip(self.address_list, self.senddata_list)):
+        for (address, packet) in cycle(zip(self.dstaddr_list, self.senddata_list)):
             self.sock.sendto(packet, address)
             self.sendObj.count += 1
             if self.stop_flg:

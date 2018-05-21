@@ -26,7 +26,9 @@ class MenuBar:
         # 項目
         menu_file.add_command(
             label="ログの保存", command=MenuController.SaveLog())
-        menu_file.add_command(label="終了(X)", under=3, command=sys.exit)
+        menu_file.add_command(
+            label="管理者として実行", command=MenuController.AdvancedExec())
+        menu_file.add_command(label="終了", command=sys.exit)
 
     def _option_menu(self, parent_menu):
         menu_option = tk.Menu(parent_menu, tearoff=False)

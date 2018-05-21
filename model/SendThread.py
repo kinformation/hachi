@@ -17,8 +17,8 @@ class SendThread(threading.Thread):
         self.unlimited = params.unlimited.get()
         self.freq = 1 / int(params.pps.get())
         self.data = HachiUtil.ramdom_binary(int(params.datalen.get()))
-        self.address_list = params.dstaddr.address_list()
-        self.advanced = True
+        self.dstaddr_list = params.dstaddr.address_list()
+        self.srcaddr_list = params.srcaddr.address_list()
 
         # srcportはIntVar()を渡す
         self.srcport = srcport
@@ -28,7 +28,7 @@ class SendThread(threading.Thread):
 
         # IPv4とIPv6でソケットファミリー分かれる
         self.family = socket.AF_INET if ipaddress.ip_address(
-            self.address_list[0][0]).version == 4 else socket.AF_INET6
+            self.dstaddr_list[0][0]).version == 4 else socket.AF_INET6
 
     def run(self):
         # 下位クラスで定義

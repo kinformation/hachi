@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 from tkinter import messagebox, filedialog
+import sys
+import ctypes
+import time
 
 from controller import LogController
 
@@ -30,6 +33,22 @@ class SaveLog:
         f = open(filename, 'w')
         f.write(log)
         f.close()
+
+
+class AdvancedExec:
+    """ 管理者権限で実行 """
+
+    def __init__(self):
+        pass
+
+    def __call__(self):
+        opt = __file__ + "\\..\\..\\hachi.py"
+        ctypes.windll.shell32.ShellExecuteW(
+            None, "runas", sys.executable, opt, None,  0)
+
+        # すぐ終了させると起動失敗するから少し待つ
+        time.sleep(1)
+        sys.exit()
 
 
 class TaskPriority:

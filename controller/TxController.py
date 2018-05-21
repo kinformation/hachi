@@ -17,6 +17,8 @@ DEF_DATALEN = 1024
 DEF_PPS = 100
 DEF_DST_IP = "169.254.1.80"
 DEF_DST_PROT = 12000
+DEF_SRC_IP = "169.254.1.80"
+DEF_SRC_PROT = 12000
 
 MIN_DATALEN = 0
 MAX_DATALEN = 9999
@@ -68,7 +70,8 @@ class SendParams(object):
             cls.unlimited = tk.BooleanVar(value=False)
             cls.bps = tk.StringVar()
             cls.dstaddr = AddrVar(ip=DEF_DST_IP, port=DEF_DST_PROT)
-            cls.srcaddr = AddrVar()
+            cls.srcaddr = AddrVar(port=DEF_SRC_PROT)
+            cls.advanced = False
 
         return cls._instance
 
@@ -216,6 +219,9 @@ class SendAction:
         CheckUnlimited(
             SendParams.unlimited, self.widgets['param_pps'])()
 
+        # 管理者権限モード表示設定
+        advanced_view(self.widgets)
+
         self.stat = 0
 
 
@@ -249,6 +255,22 @@ def tcp_exception(exc_obj):
     messagebox.showwarning(title="warning", message=msg)
     SendAction().send_stop()
 
+
+def advanced_view(widgets):
+    """ 管理者権限モードの動作設定 """
+
+    srcip_obj = widgets['srcip']
+    srcport_obj = widgets['srcport']
+
+# 通常モード
+    if HachiUtil.is_admin() == False:
+        srcip_obj.state(['disabled'])
+        srcport_obj.state(['disabled'])
+    # 管理者権限モード
+    else:
+        srcip_obj.state(['!disabled'])
+        srcport_obj.state(['!disabled'])
+
 # =================================
 # == ローカル関数
 # =================================
@@ -259,21 +281,36 @@ def _param_check():
 
     msg = ""
     dstaddr = SendParams.dstaddr
+    srcaddr = SendParams.srcaddr
     datalen = SendParams.datalen.get()
     pps = SendParams.pps.get()
 
-    # IPフォーマットチェック
+    # 送信先IPフォーマットチェック
     try:
         for ip in dstaddr.ip_list():
             ipaddress.ip_address(ip)
     except:
         # IPアドレス形式ではない
-        msg += "・IPアドレスの指定が不正です。\n"
+        msg += "・送信先IPアドレスの指定が不正です。\n"
 
-    # ポート番号 0～65535
+    # 送信先ポート番号 0～65535
     for port in dstaddr.port_list():
         if not (port.isdigit() and (0 <= int(port) <= 65535)):
-            msg += "・ポート番号は 0～65535 の範囲で指定してください。\n"
+            msg += "・送信先ポート番号は 0～65535 の範囲で指定してください。\n"
+            break
+
+    # 送信元IPフォーマットチェック
+    try:
+        for ip in srcaddr.ip_list():
+            ipaddress.ip_address(ip)
+    except:
+        # IPアドレス形式ではない
+        msg += "・送信元IPアドレスの指定が不正です。\n"
+
+    # 送信元ポート番号 0～65535
+    for port in srcaddr.port_list():
+        if not (port.isdigit() and (0 <= int(port) <= 65535)):
+            msg += "・送信元ポート番号は 0～65535 の範囲で指定してください。\n"
             break
 
     # データ長

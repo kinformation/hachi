@@ -27,7 +27,7 @@ class SendTcpThread(SendThread.SendThread):
 
         try:
             # TCPコネクション生成
-            self.sock.connect(self.address_list[0])
+            self.sock.connect(self.dstaddr_list[0])
             # 送信元ポート通知
             self.srcport.set(self.sock.getsockname()[1])
 
@@ -46,7 +46,7 @@ class SendTcpThread(SendThread.SendThread):
         st = 0
         for _ in repeat(0):
             st = time.perf_counter()
-            self.sock.send(self.payload)
+            self.sock.send(self.data)
             self.sendObj.count += 1
             if self.stop_flg:
                 break
@@ -57,7 +57,7 @@ class SendTcpThread(SendThread.SendThread):
 
     def _send_u(self):
         for _ in repeat(0):
-            self.sock.send(self.payload)
+            self.sock.send(self.data)
             self.sendObj.count += 1
             if self.stop_flg:
                 break
