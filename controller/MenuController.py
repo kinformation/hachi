@@ -44,9 +44,9 @@ class TaskPriority:
         import win32process
         import win32con
 
-        priorityclasses = [win32process.IDLE_PRIORITY_CLASS,
+        priorityclasses = [win32process.HIGH_PRIORITY_CLASS,
                            win32process.NORMAL_PRIORITY_CLASS,
-                           win32process.HIGH_PRIORITY_CLASS]
+                           win32process.IDLE_PRIORITY_CLASS]
         if pid == None:
             pid = win32api.GetCurrentProcessId()
         handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, True, pid)
