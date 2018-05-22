@@ -21,3 +21,5 @@ sock_l3.send(ether.bin(), "169.254.1.10")
 # # close sockets
 sock_l2.close()
 sock_l3.close()
+
+socket.IPV6_CHECKSUM

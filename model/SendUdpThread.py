@@ -25,7 +25,7 @@ class SendUdpThread(SendThread.SendThread):
             self.senddata = [(self.data, dst) for dst in self.dstaddr_list]
         else:  # 管理者権限
             self.sock = socket.socket(
-                self.family, socket.SOCK_RAW, socket.IPPROTO_UDP)
+                self.family, socket.SOCK_RDM, socket.IPPROTO_UDP)
             # self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
             for dst, src in product(self.dstaddr_list, self.srcaddr_list):
                 self.senddata.append((UDPPacket(self.data, dst, src), dst))
