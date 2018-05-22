@@ -8,7 +8,7 @@ import socket
 import time
 from itertools import cycle, product
 from contextlib import closing
-from struct import pack
+# from struct import pack
 
 from model import SendThread
 
@@ -26,7 +26,7 @@ class SendUdpThread(SendThread.SendThread):
         else:  # 管理者権限
             self.sock = socket.socket(
                 self.family, socket.SOCK_RAW, socket.IPPROTO_UDP)
-            self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
+            # self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
             for dst, src in product(self.dstaddr_list, self.srcaddr_list):
                 self.senddata.append((UDPPacket(self.data, dst, src), dst))
 
@@ -65,115 +65,28 @@ class SendUdpThread(SendThread.SendThread):
                 break
 
 
-class Packet:
-    def __init__(self):
-        self.version = 4  # ip version
-        self.hl = 5  # internet header length
-        self.tos = 0  # type of service
-        # self.length = 0 #length
-        self.id = 41407  # identification
-        self.flags = 0b010  # reserved+don't fragment(df)+more fragments(mf)
-        self.offset = 0  # fragment offset
-        self.ttl = 128  # time to live
-        self.protocol = 255  # ip protocol raw: 255
-        self.checksum = 0  # header checksum
-        self.src = self._get_addr('127.0.0.1')  # source ip address
-        self.dst = self._get_addr('127.0.0.1')  # destination ip address
-        self.data = ""
-
-    def _get_addr(self, name):
-        # return socket.inet_aton(socket.gethostbyname(name))
-        return socket.inet_aton(name)
-
-    def _get_checksum(self, data):
-        """ チェックサムを生成 """
-
-        result = 0
-        # 1. 2オクテットごとに足し合わせる(奇数なら\x00パディング)
-        for i in range(0, len(data), 2):
-            try:
-                result += data[i] << 8 | data[i+1]
-            except IndexError:  # 奇数オクテットの場合
-                result += data[i] << 8
-
-        # 2. LSB(下位16bit)とMSB(上位16bit:桁あふれ分)を加算する
-        while result > 0xffff:
-            result = (result & 0xffff)+(result >> 16)
-
-        # 3. 計算結果の１の補数を返す
-        return 0xffff - result
-
-    def set_src(self, name):
-        self.src = self._get_addr(name)
-
-    def set_dst(self, name):
-        self.dst = self._get_addr(name)
-
-    def build(self):
-        """ IPパケット構築 """
-
-        length = self.hl*4+len(self.data)
-        result = b""
-        result += pack(">B", (self.version << 4)+self.hl)
-        result += pack(">B", self.tos)
-        result += pack(">H", length)
-        result += pack(">H", self.id)
-        result += pack(">H", (self.flags << 13)+self.offset)
-        result += pack(">B", self.ttl)
-        result += pack(">B", self.protocol)
-        result += pack(">H", 0)
-        result += self.src+self.dst+self.data
-        return result
+from pypacker.layer3.ip import IP
+from pypacker.layer3.ip6 import IP6
+from pypacker.layer4.udp import UDP
+import ipaddress
 
 
 def UDPPacket(data, dst_addr, src_addr, **kwargs):
     """
-    UDPパケットを生成する
+    L2までのUDPパケットを生成する
     data -> binary
     dst_addr,src_addr -> (ip, port)
     """
-
-    p = Packet()
-
-    for attr, value in kwargs.items():
-        setattr(p, attr, value)
-
-    # プロトコル番号設定
-    p.protocol = 17
-
-    # 送信元IPアドレス設定
-    p.set_src(src_addr[0])
-    # 送信先IPアドレス設定
-    p.set_dst(dst_addr[0])
-
-    # UDPヘッダ
-    #  0      7 8     15 16    23 24    31
-    # +--------+--------+--------+--------+
-    # |   source port   | destination port|
-    # +--------+--------+--------+--------+
-    # |     length      |    checksum     |
-    # +--------+--------+--------+--------+
-    # |               data
-    # +---------------- ...
-    udp_header = pack(">HHH", src_addr[1], dst_addr[1], len(data)+8)
-
-    # チェックサム用疑似ヘッダ(IPv4)
-    #  0      7 8     15 16    23 24    31
-    # +--------+--------+--------+--------+
-    # |          source address           |
-    # +--------+--------+--------+--------+
-    # |        destination address        |
-    # +--------+--------+--------+--------+
-    # |  zero  |protocol|   UDP length    |
-    # +--------+--------+--------+--------+
-    pseudo_len = pack(">H", (len(data)+8))
-    pseudo_header = p.src + p.dst + b"\x00" + \
-        pack(">B", p.protocol) + pseudo_len
-    checksum_src = pseudo_header+udp_header+data
-
-    # チェックサム計算
-    checksum = p._get_checksum(checksum_src)
-    udp_header += pack(">H", checksum)
-
-    p.data = udp_header+data
-    return p.build()
+    # ip_version = ipaddress.ip_address(src_addr[0]).version
+    # ip_header = ""
+    # if ip_version == 4:
+    #     ip_header = IP(src_s=src_addr[0], dst_s=dst_addr[0])
+    # if ip_version == 6:
+    #     ip_header = IP6(src_s=src_addr[0], dst_s=dst_addr[0], hlim=128)
+    # udp_header = UDP(sport=src_addr[1], dport=dst_addr[1], body_bytes=data)
+    # packet = ip_header + udp_header
+    # print(packet)
+    # print(packet.bin()[:-2]+b"\x48\xa7")
+    # return packet.bin()[:-2]+b"\x48\xa7"
+    udp_header = UDP(sport=src_addr[1], dport=dst_addr[1], body_bytes=data)
+    return udp_header.bin()

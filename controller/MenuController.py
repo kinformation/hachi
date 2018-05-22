@@ -44,7 +44,7 @@ class AdvancedExec:
     def __call__(self):
         opt = __file__ + "\\..\\..\\hachi.py"
         ctypes.windll.shell32.ShellExecuteW(
-            None, "runas", sys.executable, opt, None,  0)
+            None, "runas", sys.executable, opt, None,  1)
 
         # すぐ終了させると起動失敗するから少し待つ
         time.sleep(1)
