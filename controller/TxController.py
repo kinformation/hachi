@@ -12,7 +12,11 @@ from controller import LogController
 # =================================
 # == 定数
 # =================================
-DEF_PROTO = 1  # 0:TCP 1:UDP
+PROTO_TCP = 0
+PROTO_UDP = 1
+PROTO_ORG = 2
+
+DEF_PROTO = PROTO_UDP
 DEF_DATALEN = 1024
 DEF_PPS = 100
 DEF_DST_IP = "169.254.1.80"
@@ -154,15 +158,15 @@ class SendAction:
         # パケット送信スレッド開始
         #   0:TCP 1:UDP 2:Original(不使用)
         proto = SendParams.proto.get()
-        if proto == 0:
+        if proto == PROTO_TCP:
             logger.insert("TCPパケット送信を開始します\n{}".format(
                 SendParams.dstaddr.address_list()))
             self._send_tcp_start()
-        elif proto == 1:
+        elif proto == PROTO_UDP:
             logger.insert("UDPパケット送信を開始します\n{}".format(
                 SendParams.dstaddr.address_list()))
             self._send_udp_start()
-        elif proto == 2:
+        elif proto == PROTO_ORG:
             pass
 
         MonitorParams.send_btn.set("送信停止")
@@ -283,42 +287,56 @@ def _param_check():
     dstaddr = SendParams.dstaddr
     srcaddr = SendParams.srcaddr
     datalen = SendParams.datalen.get()
+    proto = SendParams.proto.get()
     pps = SendParams.pps.get()
 
     # 送信先IPフォーマットチェック
-    try:
-        for ip in dstaddr.ip_list():
-            ipaddress.ip_address(ip)
-    except:
-        # IPアドレス形式ではない
-        msg += "・送信先IPアドレスの指定が不正です。\n"
+    dstip_list = dstaddr.ip_list()
+    if proto == PROTO_TCP and len(dstip_list) >= 2:  # TCPプロトコルかつ、複数指定
+        msg += "・TCPプロトコルで複数の送信先IPアドレスは指定できません。\n"
+    else:
+        try:
+            for ip in dstip_list:
+                ipaddress.ip_address(ip)
+        except:
+            # IPアドレス形式ではない
+            msg += "・送信先IPアドレスの指定が不正です。\n"
 
     # 送信先ポート番号 0～65535
-    for port in dstaddr.port_list():
-        if not (port.isdigit() and (0 <= int(port) <= 65535)):
-            msg += "・送信先ポート番号は 0～65535 の範囲で指定してください。\n"
-            break
+    dstport_list = dstaddr.port_list()
+    if proto == PROTO_TCP and len(dstport_list) >= 2:  # TCPプロトコルかつ、複数指定
+        msg += "・TCPプロトコルで複数の送信先ポート番号は指定できません。\n"
+    else:
+        for port in dstport_list:
+            if not (port.isdigit() and (0 <= int(port) <= 65535)):
+                msg += "・送信先ポート番号は 0～65535 の範囲で指定してください。\n"
+                break
 
-    # 送信元IPフォーマットチェック
-    try:
-        for ip in srcaddr.ip_list():
-            ipaddress.ip_address(ip)
-    except:
-        # IPアドレス形式ではない
-        msg += "・送信元IPアドレスの指定が不正です。\n"
+    # # 送信元IPフォーマットチェック
+    # # TODO:送信元IPアドレス設定不可
+    # try:
+    #     for ip in srcaddr.ip_list():
+    #         ipaddress.ip_address(ip)
+    # except:
+    #     # IPアドレス形式ではない
+    #     msg += "・送信元IPアドレスの指定が不正です。\n"
 
     # 送信元ポート番号 0～65535
-    for port in srcaddr.port_list():
-        if not (port.isdigit() and (0 <= int(port) <= 65535)):
-            msg += "・送信元ポート番号は 0～65535 の範囲で指定してください。\n"
-            break
+    srcport_list = srcaddr.ip_list()
+    if proto == PROTO_TCP and len(srcport_list) >= 2:  # TCPプロトコルかつ、複数指定
+        msg += "・TCPプロトコルで複数の送信元ポート番号は指定できません。\n"
+    else:
+        for port in srcaddr.port_list():
+            if not (port.isdigit() and (0 <= int(port) <= 65535)):
+                msg += "・送信元ポート番号は 0～65535 の範囲で指定してください。\n"
+                break
 
     # データ長
     if not (datalen.isdigit() and (MIN_DATALEN <= int(datalen) <= MAX_DATALEN)):
         msg += "・データ長(byte)は {}～{} の範囲で指定してください。\n".format(MIN_DATALEN, MAX_DATALEN)
 
     # 送信パケット数/秒
-    if not (pps.isdigit() and (MIN_DATALEN <= int(pps) <= MAX_PPS)):
-        msg += "・送信パケット数/秒は {}～{} の範囲で指定してください。\n".format(MIN_DATALEN, MAX_PPS)
+    if not (pps.isdigit() and (MIN_PPS <= int(pps) <= MAX_PPS)):
+        msg += "・送信パケット数/秒は {}～{} の範囲で指定してください。\n".format(MIN_PPS, MAX_PPS)
 
     return msg

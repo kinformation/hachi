@@ -25,8 +25,8 @@ class SendUdpThread(SendThread.SendThread):
             self.senddata = [(self.data, dst) for dst in self.dstaddr_list]
         else:  # 管理者権限
             self.sock = socket.socket(
-                self.family, socket.SOCK_RDM, socket.IPPROTO_UDP)
-            # self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
+                self.family, socket.SOCK_RAW, socket.IPPROTO_UDP)
+            # self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 0)
             for dst, src in product(self.dstaddr_list, self.srcaddr_list):
                 self.senddata.append((UDPPacket(self.data, dst, src), dst))
 
@@ -73,20 +73,9 @@ import ipaddress
 
 def UDPPacket(data, dst_addr, src_addr, **kwargs):
     """
-    L2までのUDPパケットを生成する
+    L3までのUDPパケットを生成する
     data -> binary
     dst_addr,src_addr -> (ip, port)
     """
-    # ip_version = ipaddress.ip_address(src_addr[0]).version
-    # ip_header = ""
-    # if ip_version == 4:
-    #     ip_header = IP(src_s=src_addr[0], dst_s=dst_addr[0])
-    # if ip_version == 6:
-    #     ip_header = IP6(src_s=src_addr[0], dst_s=dst_addr[0], hlim=128)
-    # udp_header = UDP(sport=src_addr[1], dport=dst_addr[1], body_bytes=data)
-    # packet = ip_header + udp_header
-    # print(packet)
-    # print(packet.bin()[:-2]+b"\x48\xa7")
-    # return packet.bin()[:-2]+b"\x48\xa7"
     udp_header = UDP(sport=src_addr[1], dport=dst_addr[1], body_bytes=data)
     return udp_header.bin()

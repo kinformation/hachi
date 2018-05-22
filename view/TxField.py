@@ -85,15 +85,21 @@ class SrcAddressField(ttk.LabelFrame):
         ttk.LabelFrame.__init__(self, master, text="送信元設定")
 
         # IPアドレス
-        ipframe = ttk.Frame(self)
-        ipframe.pack(anchor=tk.E)
-        ttk.Label(ipframe, text="IPアドレス").pack(side=tk.LEFT)
-        address_list = HachiUtil.LocalAddress().get()
-        srcip = ttk.Combobox(ipframe, width=21, values=address_list)
-        srcip.configure(textvariable=TxController.SendParams().srcaddr.ip)
-        TxController.SendParams().srcaddr.ip.set(address_list[0])
-        # IPアドレスをコピーできるようにするため、ROにしない
-        # srcip.state(['readonly'])
+        # TODO: 送信元IPアドレス設定は将来検討
+        # ipframe = ttk.Frame(self)
+        # ipframe.pack(anchor=tk.E)
+        # ttk.Label(ipframe, text="IPアドレス").pack(side=tk.LEFT)
+        # address_list = HachiUtil.LocalAddress().get()
+        # srcip = ttk.Combobox(ipframe, width=21, values=address_list)
+        # srcip.configure(textvariable=TxController.SendParams().srcaddr.ip)
+        # TxController.SendParams().srcaddr.ip.set(address_list[0])
+        # # IPアドレスをコピーできるようにするため、ROにしない
+        # # srcip.state(['readonly'])
+        # srcip.pack(anchor=tk.E)
+        # txWidgets['srcip'] = srcip
+        srcip = Common.LabelEntry(self, text="IPアドレス", width=23)
+        srcip.Entry.insert(0, "設定できません")
+        srcip.Entry.state(['disabled'])
         srcip.pack(anchor=tk.E)
         txWidgets['srcip'] = srcip
 
