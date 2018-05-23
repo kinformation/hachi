@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 netifaces = "*"
 pyinstaller = "*"
-pypacker = "*"
 
 [dev-packages]
 pylint = "*"
