@@ -29,19 +29,94 @@ Hachi
 
 ### クライアント機能
 
-||Nana|Hachi|
-|:--|:--|:--|
-|TCPパケット送信|○|○|
-|UDPパケット送信|○|○|
-|パケット手動生成|○|×|
-|宛先IPアドレス指定|○|○|
-|宛先ポート指定|○|○|
-|複数宛先ポート指定|×|○ ※UDPのみ|
-|パケットデータ長設定|○ (1,500 byteまで)|○ (9,000 byteまで)|
-|パケット数/秒設定|○|○|
-|最高速パケット送信|○|○|
-|スループット計測|送信パケット数/秒<br>１パケットあたりのデータ長<br>bps|送信パケット数/秒<br>１パケットあたりのデータ長<br>bps|
-|IPv6対応|○|○|
+<table>
+  <thead>
+		<tr>
+			<th colspan="3"></th>
+			<th>Nana</th>
+			<th>Hachi</th>
+		</tr>
+  </thead>
+	<tbody>
+		<tr>
+			<td rowspan="5">TCPパケット送信</td>
+			<td rowspan="2">送信元設定</td>
+			<td>IPアドレス</td>
+			<td>△(Originalパケット生成で可能)</td>
+			<td>×</td>
+		</tr>
+		<tr>
+			<td>ポート番号</td>
+			<td>△(Originalパケット生成で可能)</td>
+			<td>一つのみ指定可能</td>
+		</tr>
+		<tr>
+			<td rowspan="2">送信先設定</td>
+			<td>IPアドレス</td>
+			<td>一つのみ指定可能</td>
+			<td>一つのみ指定可能</td>
+		</tr>
+		<tr>
+			<td>ポート番号</td>
+			<td>一つのみ指定可能</td>
+			<td>一つのみ指定可能</td>
+		</tr>
+		<tr>
+			<td colspan="2">IPv6対応</td>
+			<td>○</td>
+			<td>○</td>
+		</tr>
+		<tr>
+			<td rowspan="5">UDPパケット送信</td>
+			<td rowspan="2">送信元設定</td>
+			<td>IPアドレス</td>
+			<td>△(Originalパケット生成で可能)</td>
+			<td>×</td>
+		</tr>
+		<tr>
+			<td>ポート番号</td>
+			<td>△(Originalパケット生成で可能)</td>
+			<td>複数指定可能</td>
+		</tr>
+		<tr>
+			<td rowspan="2">送信先設定</td>
+			<td>IPアドレス</td>
+			<td>一つのみ指定可能</td>
+			<td>複数指定可能</td>
+		</tr>
+		<tr>
+			<td>ポート番号</td>
+			<td>一つのみ指定可能</td>
+			<td>複数指定可能</td>
+		</tr>
+		<tr>
+			<td colspan="2">IPv6対応</td>
+			<td>○</td>
+			<td>○</td>
+		</tr>
+		<tr>
+			<td rowspan="3">共通設定</td>
+			<td colspan="2">パケットデータ長</td>
+			<td>1,500 byteまで</td>
+			<td>9,999 byteまで</td>
+		</tr>
+		<tr>
+			<td colspan="2">パケット数/秒</td>
+			<td>○</td>
+			<td>○</td>
+		</tr>
+		<tr>
+			<td colspan="2">最高速パケット送信</td>
+			<td>○</td>
+			<td>○</td>
+		</tr>
+		<tr>
+			<td colspan="3">スループット計測</td>
+			<td>送信パケット数/秒</br>１パケットあたりのデータ長</br>bps</td>
+			<td>送信パケット数/秒</br>１パケットあたりのデータ長</br>bps</td>
+		</tr>
+	</tbody>
+</table>
 
 ### オプション機能
 
@@ -65,16 +140,17 @@ Hachi
 - Windows 10(64bit)
 
 ## Change Log
-
+- v1.2.0(2018/05/23)
+  - 最大ジャンボフレーム拡張(9,000byte -> 9,999bye)
+  - パケット送信元設定指定
+  - パケット送信先の複数IPアドレス、ポート指定追加
+  - タスク優先度設定追加
 - v1.1.0(2018/05/15)
   - 送信先ポートの範囲選択機能追加
 - v1.0.0(2018/04/27)
   - 初回リリース
 
 ## Future
-
-- ジャンボパケット対応
-- 送信元インタフェース(IP,port)指定(マルチ対応含む)
 - 受信インタフェース マルチ対応
 - スループットのグラフ表示
 

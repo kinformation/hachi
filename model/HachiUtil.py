@@ -33,9 +33,9 @@ def is_admin():
 class UpdateBps:
     """ bpsの動的更新 """
 
-    def __init__(self, len, freq, bps_str):
+    def __init__(self, len, pps, bps_str):
         self.len = len
-        self.freq = freq
+        self.pps = pps
         self.bps_str = bps_str
 
         # 初回実行
@@ -44,7 +44,13 @@ class UpdateBps:
     def __call__(self, *args):
         try:
             # 数値以外が設定されていたら例外へ飛ぶ
-            bps = ((self.len.get() + 46) * 8) * self.freq.get()
+            len = int(self.len.get())
+            pps = int(self.pps.get())
+
+            HEADER_LEN = 46
+            BYTE_2_BIT = 8
+
+            bps = (len+HEADER_LEN) * BYTE_2_BIT * pps
             unit = " bps"
 
             if bps < 1024:

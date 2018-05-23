@@ -82,6 +82,11 @@ class SendParams(object):
             cls.srcaddr = AddrVar(port=DEF_SRC_PROT)
             cls.advanced = HachiUtil.is_admin()
 
+            # "bps目安"動的更新
+            bps_callback = HachiUtil.UpdateBps(cls.datalen, cls.pps, cls.bps)
+            cls.pps.trace_add('write', bps_callback)
+            cls.datalen.trace_add('write', bps_callback)
+
         return cls._instance
 
 

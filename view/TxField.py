@@ -120,6 +120,9 @@ class SendParamField(ttk.Frame):
     def __init__(self, master):
         ttk.Frame.__init__(self, master)
 
+        # 注意書き
+        ttk.Label(self, text="※ カンマ(,)区切りで複数指定").pack(anchor=tk.E)
+
         # データ長
         param_datalen = Common.LabelEntry(self, text="データ長", width=6)
         param_datalen.pack(side=tk.LEFT, padx=5)
@@ -141,9 +144,10 @@ class SendParamField(ttk.Frame):
         param_unlimited.configure(variable=TxController.SendParams().unlimited)
         txWidgets['param_unlimited'] = param_unlimited
 
-        # # 送信速度の目安
-        # ttk.Label(self, text="送信速度の目安:   ").pack(side=tk.LEFT)
-        # txWidgets['param_pps'] = param_pps
+        # 送信速度の目安
+        ttk.Label(self, text="bps目安:").pack(side=tk.LEFT)
+        param_bps = ttk.Label(self, textvariable=TxController.SendParams().bps)
+        param_bps.pack(side=tk.LEFT, padx=5)
 
 
 class MonitorField(ttk.LabelFrame):
