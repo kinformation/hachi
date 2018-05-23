@@ -26,7 +26,7 @@ class LogController:
         # 最終行へスクロール
         self.log_area.see(tk.END)
 
-        # 書き込み禁止設定
+        # 書き込み禁止再設定
         self.log_area['state'] = tk.DISABLED
 
     def get(self):

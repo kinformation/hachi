@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-パケットを受け取るスレッドの基底クラス
-"""
-
 import socket
 import threading
 import ipaddress
@@ -12,6 +8,8 @@ from controller import RxController
 
 
 class RecvThread(threading.Thread):
+    """ パケットを受け取るスレッドの基底クラス """
+
     def __init__(self, params, shareObj):
         super(RecvThread, self).__init__()
         self.shareObj = shareObj

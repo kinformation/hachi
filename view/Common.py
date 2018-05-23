@@ -3,6 +3,10 @@
 import tkinter as tk
 from tkinter import ttk
 
+# =================================
+# == 公開クラス
+# =================================
+
 
 class LabelEntry(ttk.Frame):
     """ ラベル付きEntry（横並び） """

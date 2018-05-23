@@ -5,6 +5,8 @@ import time
 
 
 class RecvMonitorThread(threading.Thread):
+    """ パケット受信モニタースレッド """
+
     def __init__(self, params, shareObj):
         super(RecvMonitorThread, self).__init__()
         self.shareObj = shareObj

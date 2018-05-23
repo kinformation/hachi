@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-パケットを投げるスレッドの基底クラス
-"""
-
 import socket
 import threading
 import ipaddress
@@ -12,6 +8,8 @@ from model import HachiUtil
 
 
 class SendThread(threading.Thread):
+    """ パケットを投げるスレッドの基底クラス """
+
     def __init__(self, params, sendObj, srcport):
         super(SendThread, self).__init__()
         self.unlimited = params.unlimited.get()

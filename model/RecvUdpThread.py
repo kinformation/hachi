@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-UDPパケットを受け取るスレッド
-"""
-
 import socket
 from contextlib import closing
 
@@ -11,6 +7,8 @@ from model import RecvThread
 
 
 class RecvUdpThread(RecvThread.RecvThread):
+    """ UDPパケットを受け取るスレッド """
+
     def __init__(self, params, shareObj):
         super().__init__(params, shareObj)
 

@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
 
-"""
-TCPでパケットを投げるスレッド
-"""
-
 import socket
 import time
 from itertools import repeat
-from contextlib import closing
-from tkinter import messagebox
 
 from model import SendThread
 from controller import TxController
 
 
 class SendTcpThread(SendThread.SendThread):
+    """ TCPパケットを投げるスレッド """
+
     def __init__(self, params, sendObj, srcport):
         super().__init__(params, sendObj, srcport)
 

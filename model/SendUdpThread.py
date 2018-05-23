@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-UDPでパケットを投げるスレッド
-"""
-
 import socket
 import time
 from itertools import cycle, product
@@ -12,6 +8,8 @@ from model import SendThread
 
 
 class SendUdpThread(SendThread.SendThread):
+    """ UDPパケットを投げるスレッド """
+
     def __init__(self, params, sendObj, srcport):
         super().__init__(params, sendObj, srcport)
 

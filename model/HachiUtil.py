@@ -4,31 +4,34 @@
 汎用ユーティリティ
 """
 
-import struct
-import random
+from struct import pack
+from random import randint
 import netifaces
 import ipaddress
 import ctypes
 
+# =================================
+# == 公開関数
+# =================================
+
 
 def ramdom_binary(len):
     """ 指定バイト数のランダムバイナリデータ生成 """
-    return b''.join([struct.pack("B", random.randint(0, 255)) for i in range(0, len)])
+    return b''.join([pack("B", randint(0, 255)) for i in range(0, len)])
 
 
 def is_admin():
     """ 管理者権限で実行かチェック """
-
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
     except:
         return False
 
 
-"""
-ウィジェット用クラス
-"""
-
+# =================================
+# == 公開クラス
+# == ウィジェット用
+# =================================
 
 class UpdateBps:
     """ bpsの動的更新 """

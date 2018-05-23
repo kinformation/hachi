@@ -204,5 +204,5 @@ def show(master):
     MonitorField(master).grid(sticky=tk.NW, row=3, column=1)
     ControllerField(master).grid(sticky=tk.NW, row=4, column=1)
 
-    # # 管理者権限モード表示切替(管理者権限モードなし)
+    # # 管理者モード表示切替(管理者モードなし)
     # TxController.advanced_view(txWidgets)

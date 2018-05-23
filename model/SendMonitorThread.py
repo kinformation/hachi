@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+
 import sys
 import threading
 import time
 
 
 class SendMonitorThread(threading.Thread):
+    """ パケット送信モニタースレッド """
+
     def __init__(self, sendObj, params):
         super(SendMonitorThread, self).__init__()
         self.sendObj = sendObj
