@@ -18,8 +18,12 @@ class SendTcpThread(SendThread.SendThread):
     def __init__(self, params, sendObj, srcport):
         super().__init__(params, sendObj, srcport)
 
+        # memo: 現状、複数送信元、複数送信先設定なし
+
         # TCP送信用ソケット生成
         self.sock = socket.socket(self.family, socket.SOCK_STREAM)
+        # 送信元ポート設定
+        self.sock.bind((self.ZERO_IP, self.srcaddr_list[0][1]))
         # コネクションタイムアウト値設定：3秒
         self.sock.settimeout(3.0)
 
@@ -28,8 +32,8 @@ class SendTcpThread(SendThread.SendThread):
         try:
             # TCPコネクション生成
             self.sock.connect(self.dstaddr_list[0])
-            # 送信元ポート通知
-            self.srcport.set(self.sock.getsockname()[1])
+            # # 送信元ポート通知
+            # self.srcport.set(self.sock.getsockname()[1])
 
             # 最高速の処理を軽くするため処理を分ける
             if self.unlimited:

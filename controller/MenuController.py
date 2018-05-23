@@ -23,6 +23,8 @@ Copyright (c) 2018 k.kanatani
 
 
 class SaveLog:
+    """ ログをファイル保存 """
+
     def __init__(self):
         pass
 
@@ -52,6 +54,8 @@ class AdvancedExec:
 
 
 class TaskPriority:
+    """ タスク優先度設定 """
+
     def __init__(self, priority):
         self.priority = priority
 

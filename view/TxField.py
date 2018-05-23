@@ -110,8 +110,8 @@ class SrcAddressField(ttk.LabelFrame):
         srcport.pack(anchor=tk.E)
         txWidgets['srcport'] = srcport.Entry
 
-        # 注意書き
-        ttk.Label(self, text="※ 管理者として実行の場合のみ有効").pack(anchor=tk.E)
+        # # 注意書き(管理者権限モードなし)
+        # ttk.Label(self, text="※ 管理者として実行の場合のみ有効").pack(anchor=tk.E)
 
 
 class SendParamField(ttk.Frame):
@@ -175,7 +175,7 @@ class MonitorField(ttk.LabelFrame):
         mon_pps.grid(row=0, column=0)
         mon_datalen.grid(row=0, column=1)
         mon_bps.grid(row=0, column=2)
-        mon_srcport.grid(row=1, column=0)
+        # mon_srcport.grid(row=1, column=0)  # 送信設定に含まれるため表示不要
 
 
 class ControllerField(ttk.Frame):
@@ -200,5 +200,5 @@ def show(master):
     MonitorField(master).grid(sticky=tk.NW, row=3, column=1)
     ControllerField(master).grid(sticky=tk.NW, row=4, column=1)
 
-    # 管理者権限モード表示切替
-    TxController.advanced_view(txWidgets)
+    # # 管理者権限モード表示切替(管理者権限モードなし)
+    # TxController.advanced_view(txWidgets)

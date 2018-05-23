@@ -23,11 +23,15 @@ class MenuBar:
         menu_file = tk.Menu(parent_menu, tearoff=False)
         parent_menu.add_cascade(label="ファイル(F)", underline=5, menu=menu_file)
 
-        # 項目
+        # ログの保存
         menu_file.add_command(
             label="ログの保存", command=MenuController.SaveLog())
-        menu_file.add_command(
-            label="管理者として実行", command=MenuController.AdvancedExec())
+
+        # 管理者として実行(生パケット生成が必要になったときに復活させる)
+        # menu_file.add_command(
+        #     label="管理者として実行", command=MenuController.AdvancedExec())
+
+        # 終了
         menu_file.add_command(label="終了", command=sys.exit)
 
     def _option_menu(self, parent_menu):
@@ -55,6 +59,6 @@ class MenuBar:
         menu_help = tk.Menu(parent_menu, tearoff=False)
         parent_menu.add_cascade(label="ヘルプ(H)", underline=4, menu=menu_help)
 
-        # 項目
+        # バージョン情報(A)
         menu_help.add_command(label="バージョン情報(A)", under=8,
                               command=MenuController.ShowVersion())

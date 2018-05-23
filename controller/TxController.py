@@ -56,7 +56,12 @@ class AddrVar:
         # "1,2" => ['1', '2']
         # "1-3" => ['1', '2', '3']
         # "1,2,4-6" => ['1', '2', '4', '5', '6']
-        return str.split(",")
+        li = str.split(",")
+
+        # 重複削除
+        li_uniq = list(set(li))
+
+        return li_uniq
 
 
 class SendParams(object):
@@ -223,8 +228,8 @@ class SendAction:
         CheckUnlimited(
             SendParams.unlimited, self.widgets['param_pps'])()
 
-        # 管理者権限モード表示設定
-        advanced_view(self.widgets)
+        # # 管理者権限モード表示設定(管理者権限モードなし)
+        # advanced_view(self.widgets)
 
         self.stat = 0
 
@@ -266,7 +271,7 @@ def advanced_view(widgets):
     srcip_obj = widgets['srcip']
     srcport_obj = widgets['srcport']
 
-# 通常モード
+    # 通常モード
     if HachiUtil.is_admin() == False:
         srcip_obj.state(['disabled'])
         srcport_obj.state(['disabled'])
