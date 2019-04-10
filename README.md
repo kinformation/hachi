@@ -76,7 +76,7 @@ Hachi
 		<tr>
 			<td>ポート番号</td>
 			<td>△(Originalパケット生成で可能)</td>
-			<td>複数指定可能</td>
+			<td>複数指定、範囲指定可能</td>
 		</tr>
 		<tr>
 			<td rowspan="2">送信先設定</td>
@@ -87,7 +87,7 @@ Hachi
 		<tr>
 			<td>ポート番号</td>
 			<td>一つのみ指定可能</td>
-			<td>複数指定可能</td>
+			<td>複数指定、範囲指定可能</td>
 		</tr>
 		<tr>
 			<td colspan="2">IPv6対応</td>
@@ -140,6 +140,8 @@ Hachi
 - Windows 10(64bit)
 
 ## Change Log
+- v1.3.0(2019/04/10)
+  - UDP送信の送信元、送信先ポートの範囲指定を追加
 - v1.2.0(2018/05/23)
   - 最大ジャンボフレーム拡張(9,000byte -> 9,999bye)
   - パケット送信元設定指定
@@ -160,8 +162,13 @@ Hachi
 
 ### ビルド環境
 
-* Windows 7 64bit
-* Python 3.6.5(32-bit)
+* v1.3.0 以降
+  * Windows 10 64bit
+  * Python 3.6.5(32-bit)
+
+* v1.2.0 まで
+  * Windows 7 64bit
+  * Python 3.6.5(32-bit)
 
 ### 依存パッケージ
 

@@ -121,7 +121,7 @@ class SendParamField(ttk.Frame):
         ttk.Frame.__init__(self, master)
 
         # 注意書き
-        ttk.Label(self, text="※ カンマ(,)区切りで複数指定").pack(anchor=tk.E)
+        ttk.Label(self, text="※ カンマ(,)区切りで複数指定\n※ ハイフン(-)で範囲指定").pack(anchor=tk.E)
 
         # データ長
         param_datalen = Common.LabelEntry(self, text="データ長", width=6)

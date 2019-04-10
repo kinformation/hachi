@@ -44,17 +44,26 @@ class AddrVar:
         self.port = tk.StringVar(value=port)
 
     def address_list(self):
-        # portは事前にIntチェックをしておくこと
-        port_list = map(int, self.port_list())
-        return list(itertools.product(self.ip_list(), port_list))
+        return list(itertools.product(self.ip_list(), self.port_list()))
 
     def ip_list(self):
-        return self._purse(self.ip.get())
+        return self._purse_ip(self.ip.get())
 
     def port_list(self):
-        return self._purse(self.port.get())
+        return self._purse_port(self.port.get())
 
-    def _purse(self, str):
+    def _purse_ip(self, str):
+        # "1,2" => ['1', '2']
+        # "1-3" => ['1', '2', '3']
+        # "1,2,4-6" => ['1', '2', '4', '5', '6']
+        li = str.split(",")
+
+        # 重複削除
+        li_uniq = list(set(li))
+
+        return li_uniq
+
+    def _purse_port(self, str):
         # 入力値展開
         li = self._expand_num(str)
 
@@ -347,7 +356,7 @@ def _param_check():
         msg += "・TCPプロトコルで複数の送信先ポート番号は指定できません。\n"
     else:
         for port in dstport_list:
-            if not (port.isdigit() and (0 <= int(port) <= 65535)):
+            if not (0 <= port <= 65535):
                 msg += "・送信先ポート番号は 0～65535 の範囲で指定してください。\n"
                 break
 
@@ -366,7 +375,7 @@ def _param_check():
         msg += "・TCPプロトコルで複数の送信元ポート番号は指定できません。\n"
     else:
         for port in srcaddr.port_list():
-            if not (port.isdigit() and (0 <= int(port) <= 65535)):
+            if not (0 <= int(port) <= 65535):
                 msg += "・送信元ポート番号は 0～65535 の範囲で指定してください。\n"
                 break
 
