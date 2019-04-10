@@ -4,6 +4,8 @@ import tkinter as tk
 from tkinter import messagebox
 import ipaddress
 import itertools
+from functools import reduce
+import re
 
 from view import TxField
 from model import SendTcpThread, SendUdpThread, SendMonitorThread, HachiUtil
@@ -53,15 +55,42 @@ class AddrVar:
         return self._purse(self.port.get())
 
     def _purse(self, str):
-        # "1,2" => ['1', '2']
-        # "1-3" => ['1', '2', '3']
-        # "1,2,4-6" => ['1', '2', '4', '5', '6']
-        li = str.split(",")
+        # 入力値展開
+        li = self._expand_num(str)
 
-        # 重複削除
-        li_uniq = list(set(li))
+        # ソート、重複削除
+        return sorted(list(set(li)))
 
-        return li_uniq
+    def _expand_num(self, s):
+        # カンマで分割、ハイフンを展開
+        # 正の整数のみ許容。不正入力は-1で出力
+        # -----------------------
+        # [OKパターン]
+        #   "1,2" => [1, 2]
+        #   "1-3" => [1, 2, 3]
+        #   "1,3-5,7" => [1, 3, 4, 5, 7]
+        # [NGパターン]
+        #   "1,a" => [1, -1]
+        #   "1,a-5" => [1, -1]
+        #   "1-b" => [-1]
+        #   "1-" => [-1]
+        #   "-7" => [-1]
+        # -----------------------
+
+        a = re.split(", *", s)
+        r = re.compile("[0-9]+-[0-9]+")
+
+        def f(s1):
+            a, b = map(int, s1.split('-'))
+            return list(range(a, b+1))
+
+        def g(x):
+            if r.match(x):
+                return f(x)
+            else:
+                return [int(x) if x.isdecimal() else -1]
+
+        return reduce(lambda x, y: x + g(y), a, [])
 
 
 class SendParams(object):
