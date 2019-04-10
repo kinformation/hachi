@@ -4,7 +4,9 @@ from tkinter import messagebox, filedialog
 import sys
 import ctypes
 import time
+import os
 
+from view import Common
 from controller import LogController
 
 
@@ -13,12 +15,8 @@ class ShowVersion:
         pass
 
     def __call__(self):
-        msg = """
-Hachi
-Version 1.2.0
-
-Copyright (c) 2018 k.kanatani
-"""[1:-1]
+        with open(Common.resource_path('version')) as f:
+            msg = f.read()
         messagebox.showinfo('バージョン情報', msg)
 
 
