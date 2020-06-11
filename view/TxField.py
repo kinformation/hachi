@@ -23,16 +23,24 @@ class SettingField(ttk.LabelFrame):
     def __init__(self, master):
         ttk.LabelFrame.__init__(self, master, text="送信設定")
 
+        # フィールド生成
+        srcAddressField = SrcAddressField(self)     # 送信元設定
+        labelField = ttk.Label(self, text="⇒")     # "⇒"
+        dstAddressField = DstAddressField(self)     # 送信先設定
+        sendParamField = SendParamField(self)       # 送信パラメータ設定
+        protocolField = ProtocolField(self)         # プロトコル設定
+
+        # 要素の配置
         # プロトコル設定(1列目)
-        ProtocolField(self).grid(row=0, column=0, columnspan=3, sticky=tk.W)
+        protocolField.grid(row=0, column=0, columnspan=3, sticky=tk.W)
         # 送信元設定(2列目-1)
-        SrcAddressField(self).grid(row=1, column=0, sticky=tk.N)
+        srcAddressField.grid(row=1, column=0, sticky=tk.N)
         # "⇒"(2列目-2)
-        ttk.Label(self, text="⇒").grid(row=1, column=1)
+        labelField.grid(row=1, column=1)
         # 送信先設定(2列目-3)
-        DstAddressField(self).grid(row=1, column=2, sticky=tk.N)
+        dstAddressField.grid(row=1, column=2, sticky=tk.N)
         # 送信パラメータ設定(3列目)
-        SendParamField(self).grid(row=2, column=0, columnspan=3)
+        sendParamField.grid(row=2, column=0, columnspan=3)
 
 
 class ProtocolField(ttk.LabelFrame):
@@ -47,12 +55,15 @@ class ProtocolField(ttk.LabelFrame):
             'proto_udp': {'text': "UDP", 'value': 1},
             # originalは使わなさそうなので除外
             # 'proto_org': {'text': "Original", 'value': 2},
+            'proto_icmp': {'text': "ICMP", 'value': 3},
         }
 
         for key, val in radio_item.items():
             item = ttk.Radiobutton(
                 self, text=val['text'], value=val['value'])
             item.configure(variable=TxController.SendParams().proto)
+            item.configure(command=TxController.ChangeProtocol(
+                TxController.SendParams().proto, txWidgets['srcport'], txWidgets['dstport']))
             item.pack(side=tk.LEFT, padx=8)
             txWidgets[key] = item
 

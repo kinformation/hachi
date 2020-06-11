@@ -8,7 +8,7 @@ from functools import reduce
 import re
 
 from view import TxField
-from model import SendTcpThread, SendUdpThread, SendMonitorThread, HachiUtil
+from model import SendTcpThread, SendUdpThread, SendIcmpThread, SendMonitorThread, HachiUtil
 from controller import LogController
 
 # =================================
@@ -17,6 +17,7 @@ from controller import LogController
 PROTO_TCP = 0
 PROTO_UDP = 1
 PROTO_ORG = 2
+PROTO_ICMP = 3
 
 DEF_PROTO = PROTO_UDP
 DEF_DATALEN = 1024
@@ -204,7 +205,7 @@ class SendAction:
         MonitorParams.datalen.set(SendParams.datalen.get())
 
         # パケット送信スレッド開始
-        #   0:TCP 1:UDP 2:Original(不使用)
+        #   0:TCP 1:UDP 2:Original(不使用) 3:ICMP
         proto = SendParams.proto.get()
         if proto == PROTO_TCP:
             logger.insert("TCPパケット送信を開始します\n{}".format(
@@ -216,6 +217,10 @@ class SendAction:
             self._send_udp_start()
         elif proto == PROTO_ORG:
             pass
+        elif proto == PROTO_ICMP:
+            logger.insert("ICMPパケット送信を開始します\n{}".format(
+                SendParams.dstaddr.address_list()))
+            self._send_icmp_start()
 
         MonitorParams.send_btn.set("送信停止")
 
@@ -237,6 +242,14 @@ class SendAction:
         """ UDPパケット送信スレッド """
 
         self.th_send = SendUdpThread.SendUdpThread(
+            SendParams(), self.sendObj, MonitorParams().srcport)
+        self.th_send.setDaemon(True)
+        self.th_send.start()
+
+    def _send_icmp_start(self):
+        """ ICMPパケット送信スレッド """
+
+        self.th_send = SendIcmpThread.SendIcmpThread(
             SendParams(), self.sendObj, MonitorParams().srcport)
         self.th_send.setDaemon(True)
         self.th_send.start()
@@ -271,6 +284,10 @@ class SendAction:
         CheckUnlimited(
             SendParams.unlimited, self.widgets['param_pps'])()
 
+        # ICMPなら送信元/送信先ポート番号非活性
+        ChangeProtocol(
+            SendParams.proto, self.widgets['srcport'], self.widgets['dstport'])()
+
         # # 管理者権限モード表示設定(管理者権限モードなし)
         # advanced_view(self.widgets)
 
@@ -291,6 +308,25 @@ class CheckUnlimited:
         else:
             self.pps_obj.state(['!disabled'])
 
+
+class ChangeProtocol:
+    """ 「使用プロトコル」変更時の動作設定 """
+
+    def __init__(self, select_variable, srcport_obj, dstport_obj):
+        self.select_variable = select_variable
+        self.srcport_obj = srcport_obj
+        self.dstport_obj = dstport_obj
+
+    def __call__(self, * args):
+        proto = self.select_variable.get()
+
+        # ICMPなら送信元/送信先ポート番号非活性
+        if proto == PROTO_ICMP:
+            self.srcport_obj.state(['disabled'])
+            self.dstport_obj.state(['disabled'])
+        else:
+            self.srcport_obj.state(['!disabled'])
+            self.dstport_obj.state(['!disabled'])
 
 # =================================
 # == 公開関数
